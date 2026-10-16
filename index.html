@@ -1,0 +1,1438 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Cisco Catalyst SD-WAN Manager API — Field Guide (Release 26.1)</title>
+<link rel="canonical" href="https://alexpacket.github.io/sdwan-manager-api-guide/">
+<link rel="icon" type="image/svg+xml" href="favicon.svg">
+<link rel="icon" type="image/png" sizes="32x32" href="favicon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#F7F9FB; --panel:#FFFFFF; --ink:#12263A; --ink-2:#44576A; --ink-3:#7C8B99;
+  --rule:#D5DEE7; --rule-2:#E6ECF2; --accent:#0A7BB8; --accent-soft:#E3F1FA;
+  --amber:#B7791F; --amber-soft:#FBF1DC; --green:#2C7A5B; --green-soft:#E1F1EA;
+  --red:#B54141; --red-soft:#F8E4E4; --code-bg:#0F1E2E; --code-ink:#DCE6F0;
+  --sans:'IBM Plex Sans',system-ui,-apple-system,Segoe UI,Roboto,sans-serif;
+  --mono:'IBM Plex Mono',ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+  box-sizing:border-box; padding-top:env(safe-area-inset-top,0px); padding-bottom:env(safe-area-inset-bottom,0px);
+}
+@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]){
+  --bg:#0E1720; --panel:#152130; --ink:#E6EDF3; --ink-2:#B4C1CE; --ink-3:#7E8D9C;
+  --rule:#2B3947; --rule-2:#1F2B38; --accent:#4FB3E8; --accent-soft:#12324A;
+  --amber:#E0A93F; --amber-soft:#3A2D12; --green:#5FC493; --green-soft:#12342A;
+  --red:#E07A7A; --red-soft:#3D1C1C; --code-bg:#0A131C; --code-ink:#D5E0EA; }}
+:root[data-theme="dark"]{
+  --bg:#0E1720; --panel:#152130; --ink:#E6EDF3; --ink-2:#B4C1CE; --ink-3:#7E8D9C;
+  --rule:#2B3947; --rule-2:#1F2B38; --accent:#4FB3E8; --accent-soft:#12324A;
+  --amber:#E0A93F; --amber-soft:#3A2D12; --green:#5FC493; --green-soft:#12342A;
+  --red:#E07A7A; --red-soft:#3D1C1C; --code-bg:#0A131C; --code-ink:#D5E0EA; }
+html{scroll-padding-top:calc(env(safe-area-inset-top,0px) + 16px); scroll-behavior:smooth}
+@media (prefers-reduced-motion: reduce){ html{scroll-behavior:auto} *{transition:none!important} }
+*,*::before,*::after{box-sizing:inherit}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--sans);font-size:16px;line-height:1.55;-webkit-font-smoothing:antialiased}
+a{color:var(--accent)}
+code,pre,.ep{font-family:var(--mono)}
+code{font-size:.88em;background:var(--rule-2);padding:.1em .35em;border-radius:3px;color:var(--ink)}
+.layout{display:grid;grid-template-columns:260px minmax(0,1fr);min-height:100%}
+nav.side{position:sticky;top:env(safe-area-inset-top,0px);height:100vh;height:100dvh;overflow:auto;border-right:1px solid var(--rule);background:var(--panel);padding:24px 18px}
+nav.side .brand{font-weight:700;font-size:15px;line-height:1.3;margin:0 0 4px}
+nav.side .sub{color:var(--ink-3);font-size:12.5px;margin:0 0 18px}
+nav.side ol{list-style:none;margin:0;padding:0}
+nav.side li a{display:block;padding:6px 8px;border-radius:5px;color:var(--ink-2);text-decoration:none;font-size:13.5px}
+nav.side li a:hover{background:var(--rule-2);color:var(--ink)}
+nav.side li a.active{background:var(--accent-soft);color:var(--accent);font-weight:600}
+nav.side li.group{margin-top:14px;font-size:11.5px;color:var(--ink-3);padding:0 8px 4px;border-bottom:1px solid var(--rule-2);margin-bottom:4px}
+nav.side .legend{margin-top:22px;font-size:12px;color:var(--ink-3);border-top:1px solid var(--rule-2);padding-top:14px}
+nav.side .legend div{display:flex;gap:8px;align-items:center;margin:5px 0}
+.sw{width:12px;height:12px;border-radius:3px;flex:none}
+main{padding:36px 48px 96px;max-width:920px}
+.topbar{display:none}
+h1{font-size:34px;line-height:1.15;font-weight:700;letter-spacing:-.01em;margin:0 0 10px}
+h2{font-size:24px;line-height:1.2;font-weight:700;margin:64px 0 8px;padding-top:24px;border-top:2px solid var(--ink)}
+h3{font-size:17px;font-weight:600;margin:30px 0 8px}
+h4{font-size:14.5px;font-weight:600;margin:20px 0 6px;color:var(--ink-2)}
+p{margin:0 0 12px;max-width:74ch}
+.lead{font-size:18px;color:var(--ink-2);max-width:70ch}
+.meta{color:var(--ink-3);font-size:13px;margin-bottom:26px}
+section{scroll-margin-top:12px}
+.tag{display:inline-block;font-size:11.5px;font-weight:600;padding:2px 8px;border-radius:999px;vertical-align:middle;margin-left:6px}
+.tag.mgr{background:var(--accent-soft);color:var(--accent)}
+.tag.dev{background:var(--amber-soft);color:var(--amber)}
+.tag.cfg{background:var(--green-soft);color:var(--green)}
+.tag.warn{background:var(--red-soft);color:var(--red)}
+table{border-collapse:collapse;width:100%;font-size:14px;margin:12px 0 18px}
+th,td{text-align:left;vertical-align:top;padding:9px 10px;border-bottom:1px solid var(--rule-2)}
+th{font-weight:600;color:var(--ink-2);border-bottom:1px solid var(--rule);font-size:13px}
+.tbl{overflow-x:auto;-webkit-overflow-scrolling:touch}
+.ep{font-size:13px;white-space:nowrap}
+.ep b{color:var(--accent);font-weight:500}
+.ep.dev b{color:var(--amber)}
+.callout{border-left:3px solid var(--accent);background:var(--accent-soft);padding:12px 16px;border-radius:0 6px 6px 0;margin:16px 0;font-size:14.5px}
+.callout.amber{border-color:var(--amber);background:var(--amber-soft)}
+.callout.red{border-color:var(--red);background:var(--red-soft)}
+.callout.green{border-color:var(--green);background:var(--green-soft)}
+.callout p{margin:0 0 6px}.callout p:last-child{margin:0}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+@media (max-width:760px){.grid2{grid-template-columns:1fr}}
+.fig{margin:18px 0 22px;border:1px solid var(--rule);border-radius:8px;background:var(--panel);overflow:hidden}
+.fig .cap{font-size:12.5px;color:var(--ink-3);padding:8px 12px;border-top:1px solid var(--rule-2)}
+.fig svg{display:block;width:100%;height:auto}
+.fig .scroll{overflow-x:auto}
+pre{background:var(--code-bg);color:var(--code-ink);padding:14px 16px;border-radius:8px;font-size:12.8px;line-height:1.5;overflow-x:auto;margin:10px 0 18px;position:relative}
+pre .c{color:#7FA5C6}pre .k{color:#F4BF75}pre .s{color:#A6E3A1}
+.codebox{position:relative}
+.codebox button{position:absolute;top:8px;right:8px;font:600 11.5px var(--sans);color:var(--code-ink);background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.18);border-radius:4px;padding:3px 8px;cursor:pointer}
+.codebox button:focus-visible{outline:2px solid var(--accent)}
+details{border:1px solid var(--rule);border-radius:6px;margin:8px 0;background:var(--panel)}
+summary{cursor:pointer;padding:10px 14px;font-weight:600;font-size:14.5px;list-style:none;display:flex;justify-content:space-between;align-items:center}
+summary::-webkit-details-marker{display:none}
+summary::after{content:'+';color:var(--ink-3);font-weight:400;font-size:18px}
+details[open] summary::after{content:'−'}
+details .body{padding:0 14px 12px}
+details ul{margin:0;padding-left:18px;font-size:13.5px}
+details li{margin:3px 0}
+ul.tight{padding-left:20px;margin:6px 0 14px;max-width:74ch}ul.tight li{margin:4px 0}
+ol.steps{padding-left:22px;margin:6px 0 14px;max-width:74ch}ol.steps li{margin:6px 0}
+.pathmap{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin:14px 0 20px}
+.pathmap div{border:1px solid var(--rule);border-radius:6px;padding:10px 12px;font-size:13px;background:var(--panel)}
+.pathmap div b{display:block;font-size:13.5px;margin-bottom:3px}
+.pathmap div.on{border-color:var(--accent);background:var(--accent-soft)}
+.pathmap div.dev.on{border-color:var(--amber);background:var(--amber-soft)}
+@media (max-width:640px){.pathmap{grid-template-columns:1fr 1fr}}
+.kpi{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin:14px 0 22px}
+.kpi div{border:1px solid var(--rule);border-radius:6px;padding:12px 14px;background:var(--panel)}
+.kpi b{display:block;font-size:22px;font-weight:700;line-height:1.1}
+.kpi span{font-size:12.5px;color:var(--ink-3)}
+@media (max-width:640px){.kpi{grid-template-columns:1fr}}
+.toggle{position:fixed;right:14px;bottom:calc(14px + env(safe-area-inset-bottom,0px));font:600 12px var(--sans);background:var(--panel);color:var(--ink-2);border:1px solid var(--rule);border-radius:999px;padding:7px 12px;cursor:pointer;z-index:5}
+@media (max-width:960px){
+  .layout{grid-template-columns:1fr}
+  nav.side{position:static;height:auto;border-right:0;border-bottom:1px solid var(--rule);padding:14px 16px}
+  nav.side ol{display:flex;flex-wrap:wrap;gap:4px}
+  nav.side li.group{display:none}
+  nav.side .legend{display:none}
+  main{padding:24px 18px 80px}
+  h1{font-size:28px}
+}
+.foot{margin-top:60px;padding-top:16px;border-top:1px solid var(--rule);font-size:12.5px;color:var(--ink-3)}
+
+/* SVG colour classes (robust across viewers) */
+svg .f-ink{fill:var(--ink)} svg .f-ink-2{fill:var(--ink-2)} svg .f-ink-3{fill:var(--ink-3)}
+svg .f-panel{fill:var(--panel)} svg .f-accent{fill:var(--accent)} svg .f-accent-soft{fill:var(--accent-soft)}
+svg .f-amber{fill:var(--amber)} svg .f-amber-soft{fill:var(--amber-soft)} svg .f-green{fill:var(--green)}
+svg .f-green-soft{fill:var(--green-soft)} svg .f-red{fill:var(--red)} svg .f-red-soft{fill:var(--red-soft)}
+svg .f-rule-2{fill:var(--rule-2)} svg .f-none{fill:none}
+svg .s-ink{stroke:var(--ink)} svg .s-ink-2{stroke:var(--ink-2)} svg .s-ink-3{stroke:var(--ink-3)}
+svg .s-rule{stroke:var(--rule)} svg .s-accent{stroke:var(--accent)} svg .s-amber{stroke:var(--amber)}
+svg .s-green{stroke:var(--green)} svg .s-red{stroke:var(--red)}
+svg text{font-family:var(--sans)} svg text.m{font-family:var(--mono)}
+.figindex{border:1px solid var(--rule);border-radius:8px;padding:14px 18px;margin:18px 0 8px;background:var(--panel)}
+.figindex b{display:block;margin-bottom:6px}
+.figindex ol{columns:2;column-gap:28px;margin:0;padding-left:20px;font-size:13.5px}
+.figindex li{margin:3px 0;break-inside:avoid}
+@media (max-width:640px){.figindex ol{columns:1}}
+
+.fig .bar{display:flex;gap:8px;align-items:center;padding:6px 10px;border-bottom:1px solid var(--rule-2);background:var(--rule-2)}
+.fig .bar button{font:600 12px var(--sans);color:var(--ink-2);background:var(--panel);border:1px solid var(--rule);border-radius:4px;padding:3px 10px;cursor:pointer}
+.fig .bar button:focus-visible{outline:2px solid var(--accent)}
+.fig .bar span{font-size:12px;color:var(--ink-3);margin-left:auto}
+svg .pkt{stroke:var(--panel);stroke-width:1.5}
+svg .pkt.c-accent{fill:var(--accent)} svg .pkt.c-amber{fill:var(--amber)} svg .pkt.c-green{fill:var(--green)} svg .pkt.c-ink{fill:var(--ink-2)}
+svg .lbl-dim{opacity:.45}
+</style>
+</head>
+<body>
+<div class="layout">
+<nav class="side" aria-label="Sections">
+  <p class="brand">Catalyst SD-WAN Manager API</p>
+  <p class="sub">Field guide · Release 26.1 (with 20.18 deltas)</p>
+  <ol id="toc">
+    <li class="group">Foundations</li>
+    <li><a href="#overview">Overview and data paths</a></li>
+    <li><a href="#auth">Authentication and sessions</a></li>
+    <li><a href="#mechanics">Pagination, limits, async tasks</a></li>
+    <li class="group">Configuration areas</li>
+    <li><a href="#admin">Administration and settings</a></li>
+    <li><a href="#inventory">Device inventory</a></li>
+    <li><a href="#ux1">UX 1.0 templates and policy</a></li>
+    <li><a href="#ux2">UX 2.0 config groups</a></li>
+    <li><a href="#services">SD-WAN services and partners</a></li>
+    <li class="group">Network visibility</li>
+    <li><a href="#choose">How to choose</a></li>
+    <li><a href="#usecases">Questions → endpoints</a></li>
+    <li><a href="#state">Device state (bulk)</a></li>
+    <li><a href="#stats">Statistics</a></li>
+    <li><a href="#alarms">Alarms, events, webhooks</a></li>
+    <li><a href="#realtime">Real-time monitoring</a></li>
+    <li><a href="#tools">Troubleshooting tools</a></li>
+    <li class="group">Operate</li>
+    <li><a href="#errors">Errors and resilience</a></li>
+    <li><a href="#changes">20.18 → 26.1 changes</a></li>
+    <li><a href="#guidance">Guidance checklist</a></li>
+  </ol>
+  <div class="legend">
+    <div><span class="sw" style="background:var(--accent)"></span>Stops at the Manager (safe to poll)</div>
+    <div><span class="sw" style="background:var(--amber)"></span>Reaches the device (troubleshooting only)</div>
+    <div><span class="sw" style="background:var(--green)"></span>Writes configuration (async task)</div>
+  </div>
+</nav>
+
+<main>
+<section id="overview">
+<h1>Cisco Catalyst SD-WAN Manager API</h1>
+<p class="lead">A working reference for every API area: what each endpoint family does, how the Manager serves the call, how to implement it, and where the data actually comes from.</p>
+<p class="meta">Sources: DevNet API guide Release 26.1 (spec 26.1.0, 2026-01-06) and Release 20.18; Cisco Catalyst SD-WAN Getting Started Guide (updated July 2026); Cisco Control Components guide 26.x. Acronyms are spelled out on first use.</p>
+
+<p>The Manager API is a REST (Representational State Transfer) interface for controlling, configuring, and monitoring devices in an overlay. Cisco frames four use cases: provisioning, network visibility, third-party tool integration, and Network as Code. Every path is prefixed with <code>/dataservice</code>, payloads are JSON except a few file uploads, and the calling role needs API access permission.</p>
+
+<h3>Where a call stops decides everything</h3>
+<p>The Manager sits between your tool and the routers and keeps three stores. A call either reads one of those stores or opens a live NETCONF (Network Configuration Protocol) session to the router. Cost, freshness, and pagination all follow from which one you hit.</p>
+
+<div class="fig"><div class="scroll">
+<svg viewBox="0 0 900 330" xmlns="http://www.w3.org/2000/svg" font-size="13"><defs>
+    <marker id="ah-1" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 z" class="f-ink-2"/></marker>
+    <marker id="ahA-1" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 z" class="f-amber"/></marker>
+    <marker id="ahB-1" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 z" class="f-accent"/></marker>
+  </defs>
+  
+  <!-- client -->
+  <rect class="f-panel s-ink" x="20" y="130" width="130" height="70" rx="8" stroke-width="1.5"/>
+  <text class="f-ink" x="85" y="160" text-anchor="middle" font-weight="600">Your client</text>
+  <text class="f-ink-3" x="85" y="180" text-anchor="middle" font-size="12">script · NMS · SDK</text>
+  <!-- manager -->
+  <rect class="s-rule f-none" x="230" y="30" width="400" height="270" rx="10" stroke-dasharray="4 4"/>
+  <text class="f-ink" x="250" y="52" font-weight="600">SD-WAN Manager</text>
+  <text class="f-ink-3" x="250" y="70" font-size="12">server-proxy · rate limits · RBAC</text>
+  <rect class="f-accent-soft s-accent" x="250" y="90" width="170" height="50" rx="6"/>
+  <text class="f-ink" x="335" y="111" text-anchor="middle" font-weight="600">Configuration DB</text>
+  <text class="f-ink-2" x="335" y="128" text-anchor="middle" font-size="11.5">templates · groups · users</text>
+  <rect class="f-accent-soft s-accent" x="250" y="155" width="170" height="50" rx="6"/>
+  <text class="f-ink" x="335" y="176" text-anchor="middle" font-weight="600">Device state cache</text>
+  <text class="f-ink-2" x="335" y="193" text-anchor="middle" font-size="11.5">BFD · OMP · control</text>
+  <rect class="f-accent-soft s-accent" x="250" y="220" width="170" height="50" rx="6"/>
+  <text class="f-ink" x="335" y="241" text-anchor="middle" font-weight="600">Statistics DB</text>
+  <text class="f-ink-2" x="335" y="258" text-anchor="middle" font-size="11.5">time series · approute · DPI</text>
+  <rect class="f-panel s-ink-3" x="450" y="155" width="160" height="50" rx="6"/>
+  <text class="f-ink" x="530" y="176" text-anchor="middle" font-weight="600">Collection manager</text>
+  <text class="f-ink-2" x="530" y="193" text-anchor="middle" font-size="11.5">periodic sync from devices</text>
+  <!-- device -->
+  <rect class="f-amber-soft s-amber" x="720" y="130" width="160" height="70" rx="8" stroke-width="1.5"/>
+  <text class="f-ink" x="800" y="160" text-anchor="middle" font-weight="600">WAN edge router</text>
+  <text class="f-ink-2" x="800" y="180" text-anchor="middle" font-size="12">NETCONF over DTLS</text>
+  <!-- arrows client -> stores -->
+  <path class="s-accent f-none" d="M150,150 C200,150 210,115 250,115" stroke-width="1.6" marker-end="url(#ahB-1)"/>
+  <path class="s-accent f-none" d="M150,165 L250,180" stroke-width="1.6" marker-end="url(#ahB-1)"/>
+  <path class="s-accent f-none" d="M150,180 C200,180 210,245 250,245" stroke-width="1.6" marker-end="url(#ahB-1)"/>
+  <!-- real-time arrow passes through manager to device -->
+  <path class="s-amber f-none" d="M150,195 C220,195 240,295 420,295 C600,295 640,165 720,165" stroke-width="1.8" stroke-dasharray="6 4" marker-end="url(#ahA-1)"/>
+  <text class="f-amber" x="430" y="315" text-anchor="middle" font-size="12" font-weight="600">/device/&lt;feature&gt;?deviceId= — real-time, live pull, one device per call</text>
+  <!-- sync arrows -->
+  <path class="s-ink-3 f-none" d="M720,150 L610,170" stroke-width="1.4" marker-end="url(#ah-1)"/>
+  <path class="s-ink-3 f-none" d="M450,180 L420,180" stroke-width="1.4" marker-end="url(#ah-1)"/>
+  <path class="s-ink-3 f-none" d="M450,195 C440,215 430,235 420,240" stroke-width="1.4" marker-end="url(#ah-1)"/>
+  <text class="f-ink-3" x="665" y="140" text-anchor="middle" font-size="11.5">telemetry export</text>
+  <!-- labels -->
+  <text class="f-accent" x="185" y="104" font-size="11.5">offset/limit</text>
+  <text class="f-accent" x="185" y="216" font-size="11.5">scrollId/count</text>
+</svg></div>
+<div class="cap">Figure 1 — The three Manager-side stores and the one path that reaches the device. Blue paths are safe to poll; the amber path is for troubleshooting only.</div></div>
+
+<div class="fig" id="fig1b"><div class="scroll">
+<svg viewBox="0 0 900 270" xmlns="http://www.w3.org/2000/svg" font-size="12.5"><defs>
+    <marker id="ah-14" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 z" class="f-ink-2"/></marker>
+    <marker id="ahA-14" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 z" class="f-amber"/></marker>
+    <marker id="ahB-14" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 z" class="f-accent"/></marker>
+  </defs>
+  <!-- (a) edges -->
+  <rect class="f-amber-soft s-amber" x="10" y="40" width="200" height="190" rx="8" stroke-width="1.5"/>
+  <text class="f-ink" x="110" y="64" text-anchor="middle" font-weight="600">WAN edge routers</text>
+  <text class="f-ink-2" x="110" y="82" text-anchor="middle" font-size="11.5">export statistics on a timer</text>
+  <rect class="f-panel s-amber" x="22" y="98" width="176" height="34" rx="4"/><text class="m f-ink" x="110" y="119" text-anchor="middle" font-size="10.5">app-route: 10-min aggregates</text>
+  <rect class="f-panel s-amber" x="22" y="140" width="176" height="34" rx="4"/><text class="m f-ink" x="110" y="161" text-anchor="middle" font-size="9.5">interface: 5 min (1 min from 26.1.1)</text>
+  <rect class="f-panel s-amber" x="22" y="182" width="176" height="34" rx="4"/><text class="m f-ink" x="110" y="196" text-anchor="middle" font-size="10">collection interval:</text><text class="m f-ink" x="110" y="209" text-anchor="middle" font-size="10">default 30 min, range 5–180</text>
+  <!-- (b) stats db -->
+  <rect class="f-accent-soft s-accent" x="270" y="100" width="160" height="70" rx="8" stroke-width="1.5"/>
+  <text class="f-ink" x="350" y="130" text-anchor="middle" font-weight="600">Statistics DB</text>
+  <text class="f-ink-2" x="350" y="148" text-anchor="middle" font-size="11.5">on the Manager</text>
+  <!-- (c) scoring -->
+  <rect class="f-accent-soft s-accent" x="490" y="80" width="180" height="110" rx="8" stroke-width="1.5"/>
+  <text class="f-ink" x="580" y="104" text-anchor="middle" font-weight="600">Correlation and</text>
+  <text class="f-ink" x="580" y="120" text-anchor="middle" font-weight="600">health scoring</text>
+  <text class="f-ink-2" x="580" y="140" text-anchor="middle" font-size="11">device health good/fair/poor</text>
+  <text class="f-ink-2" x="580" y="156" text-anchor="middle" font-size="11">site · application health</text>
+  <text class="f-ink-2" x="580" y="172" text-anchor="middle" font-size="11">QoE (quality of experience)</text>
+  <!-- (d) consumers -->
+  <rect class="f-panel s-ink" x="730" y="60" width="160" height="56" rx="8"/>
+  <text class="f-ink" x="810" y="93" text-anchor="middle" font-weight="600">Manager dashboards</text>
+  <rect class="f-panel s-ink" x="730" y="154" width="160" height="56" rx="8"/>
+  <text class="m f-ink" x="810" y="187" text-anchor="middle">/statistics API</text>
+  <!-- arrows -->
+  <line class="s-amber" x1="210" y1="135" x2="268" y2="135" stroke-width="1.8" stroke-dasharray="6 4" marker-end="url(#ahA-14)"/>
+  <text class="f-amber" x="240" y="126" text-anchor="middle" font-size="11" font-weight="600">export</text>
+  <line class="s-accent" x1="430" y1="135" x2="488" y2="135" stroke-width="1.6" marker-end="url(#ahB-14)"/>
+  <text class="f-accent" x="460" y="126" text-anchor="middle" font-size="11">correlate</text>
+  <path class="s-accent f-none" d="M670,120 C700,110 705,90 728,88" stroke-width="1.6" marker-end="url(#ahB-14)"/>
+  <text class="f-accent" x="700" y="80" text-anchor="middle" font-size="11">read</text>
+  <path class="s-accent f-none" d="M670,150 C700,160 705,182 728,182" stroke-width="1.6" marker-end="url(#ahB-14)"/>
+  <text class="f-accent" x="700" y="200" text-anchor="middle" font-size="11">read</text>
+  <text class="f-ink-3" x="810" y="138" text-anchor="middle" font-size="11">same store</text>
+  <text class="f-ink-3" x="450" y="255" text-anchor="middle" font-size="11.5">Freshness is set by the device export timer, not by how often you call the API.</text>
+</svg></div>
+<div class="cap">Figure 1b — Devices export on a timer; the Manager stores, correlates and scores; dashboards and the API read the same store. The API can never be fresher than the dashboard.</div></div>
+
+<div class="pathmap">
+  <div class="on"><b>Configuration DB</b>Templates, config groups, users, inventory. Paged with <code>offset</code>/<code>limit</code>.<br><i>Freshness: live on write.</i></div>
+  <div class="on"><b>Device state cache</b>Current state of every device, refreshed by the collection manager. Paged with <code>count</code>/<code>startId</code>.<br><i>Freshness: seconds to minutes, collection-manager sync.</i></div>
+  <div class="on"><b>Statistics DB</b>Historical counters exported by devices. Paged with <code>scrollId</code>/<code>count</code>.<br><i>Freshness: bound by the per-type export interval (5–30 min typical).</i></div>
+  <div class="dev on"><b>Device (real-time)</b>Live NETCONF query. Pagination decided by the device. CPU-intensive.<br><i>Freshness: live, one device per call.</i></div>
+</div>
+<div class="figindex"><b>Data-flow diagrams in this guide (21)</b><ol>
+<li><a href="#fig0">Fig 0 — Cadence and rate-limit simulation</a></li>
+<li><a href="#overview">Fig 1 — Data paths: three stores and the device</a></li>
+<li><a href="#fig1b">Fig 1b — The telemetry pipeline</a></li>
+<li><a href="#auth">Fig 2 — JWT login and XSRF</a></li>
+<li><a href="#auth">Fig 2b — API-key flow</a></li>
+<li><a href="#mechanics">Fig 3 — Async task polling</a></li>
+<li><a href="#inventory">Fig 4 — Inventory read</a></li>
+<li><a href="#ux1">Fig 5 — Template attach (4 steps)</a></li>
+<li><a href="#ux2">Fig 6 — Config group lifecycle</a></li>
+<li><a href="#services">Fig 7 — Multicloud gateway</a></li>
+<li><a href="#usecases">Fig 8a — Tunnel vs circuit</a></li>
+<li><a href="#state">Fig 8 — Bulk device state read</a></li>
+<li><a href="#fig8b">Fig 8b — Bulk use case: nightly fabric-wide export</a></li>
+<li><a href="#stats">Fig 9 — Statistics export with scrollId</a></li>
+<li><a href="#fig9b">Fig 9b — Statistics use case: daily tunnel-quality report</a></li>
+<li><a href="#alarms">Fig 10 — Alarm webhook push</a></li>
+<li><a href="#realtime">Fig 11 — Real-time NETCONF round trip</a></li>
+<li><a href="#fig11b">Fig 11b — Real-time use case: troubleshoot one site</a></li>
+<li><a href="#tools">Fig 12 — Admin-tech generation</a></li>
+<li><a href="#errors">Fig 13 — Client retry policy</a></li>
+<li><a href="#errors">Fig 14 — Empty-response decision tree</a></li>
+</ol></div>
+<div class="kpi">
+  <div><b>13</b><span>OpenAPI categories in the 26.1 guide</span></div>
+  <div><b>~4,100</b><span>operations across the full spec</span></div>
+  <div><b>3 + 1</b><span>data stores plus the live device path</span></div>
+</div>
+</section>
+
+<!-- ============ AUTH ============ -->
+<section id="auth">
+<h2>Authentication and sessions</h2>
+<p>Three methods are supported. API keys and JWT (JSON Web Token) arrived in 20.18; session cookies remain for backward compatibility. All three require the XSRF (cross-site request forgery) token on every non-GET request.</p>
+<div class="callout"><p><b>Which one to use.</b> API key for long-lived service accounts (collectors, ITSM connectors) — no password in the pipeline, no refresh loop. JWT for short-lived scripts and CI/CD jobs where a bounded token life is a feature. Session cookies only for tooling you cannot change. DevNet's own lab standardises on the API key; verify the exact token-endpoint method (GET vs POST) on your Manager release, since DevNet's pages disagree with each other.</p></div>
+
+<div class="tbl"><table>
+<tr><th>Method</th><th>Login</th><th>Token / cookie</th><th>Lifetime</th><th>Logout</th></tr>
+<tr><td>JWT</td><td><span class="ep"><b>POST</b> /jwt/login</span> — JSON body: username, password, optional <code>duration</code> (seconds)</td><td><code>token</code> claim → <code>Authorization: Bearer</code>; <code>csrf</code> claim → <code>X-XSRF-TOKEN</code></td><td>Default 1,800 s; range 1–604,800 s (7 days). Renew with <span class="ep"><b>POST</b> /jwt/refresh</span></td><td>None — keep tokens short</td></tr>
+<tr><td>API key</td><td>Generate once in Manager: click your username → <b>My profile</b> → API token → <b>Generate</b>. No login call.</td><td><code>Authorization: Bearer &lt;apikey&gt;</code>; get XSRF with <span class="ep"><b>GET</b> /dataservice/client/token</span> (plain-string body) → <code>X-XSRF-TOKEN</code></td><td>Until revoked in the profile; rotate on a schedule</td><td>Revoke in profile</td></tr>
+<tr><td>Session</td><td><span class="ep"><b>POST</b> /j_security_check</span> — form-urlencoded <code>j_username</code>, <code>j_password</code></td><td>JSESSIONID cookie; then <span class="ep"><b>GET</b> /dataservice/client/token</span> for XSRF</td><td>24 h, 30-min idle; max 100 concurrent, least-recently-used evicted</td><td><span class="ep"><b>POST</b> /logout</span> — always</td></tr>
+</table></div>
+
+<div class="fig"><div class="scroll">
+<svg viewBox="0 0 900 300" xmlns="http://www.w3.org/2000/svg" font-size="12.5"><defs>
+    <marker id="ah-2" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 z" class="f-ink-2"/></marker>
+    <marker id="ahA-2" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 z" class="f-amber"/></marker>
+    <marker id="ahB-2" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 z" class="f-accent"/></marker>
+  </defs>
+  <g id="lanes-auth">
+    <rect class="f-panel s-ink" x="60" y="20" width="140" height="34" rx="6"/><text class="f-ink" x="130" y="42" text-anchor="middle" font-weight="600">Client</text>
+    <rect class="f-panel s-ink" x="380" y="20" width="160" height="34" rx="6"/><text class="f-ink" x="460" y="42" text-anchor="middle" font-weight="600">Manager (server-proxy)</text>
+    <rect class="f-panel s-ink" x="700" y="20" width="140" height="34" rx="6"/><text class="f-ink" x="770" y="42" text-anchor="middle" font-weight="600">Auth / RBAC store</text>
+    <line class="s-rule" x1="130" y1="54" x2="130" y2="290" stroke-dasharray="3 4"/>
+    <line class="s-rule" x1="460" y1="54" x2="460" y2="290" stroke-dasharray="3 4"/>
+    <line class="s-rule" x1="770" y1="54" x2="770" y2="290" stroke-dasharray="3 4"/>
+  </g>
+  <line class="s-ink-2" x1="130" y1="85" x2="458" y2="85" stroke-width="1.5" marker-end="url(#ah-2)"/>
+  <text x="295" y="79" text-anchor="middle" class="m f-ink" font-size="12">POST /jwt/login {username, password, duration}</text>
+  <line class="s-ink-2" x1="460" y1="110" x2="768" y2="110" stroke-width="1.5" marker-end="url(#ah-2)"/>
+  <text class="f-ink-2" x="615" y="104" text-anchor="middle">validate credentials · resolve usergroup features</text>
+  <line class="s-ink-2" x1="770" y1="135" x2="462" y2="135" stroke-width="1.5" marker-end="url(#ah-2)"/>
+  <text class="f-ink-2" x="615" y="129" text-anchor="middle">roles</text>
+  <line class="s-ink-2" x1="460" y1="160" x2="132" y2="160" stroke-width="1.5" marker-end="url(#ah-2)"/>
+  <text x="295" y="154" text-anchor="middle" class="m f-ink" font-size="12">200 {token, csrf, expiresIn}</text>
+  <rect class="f-accent-soft s-accent" x="80" y="180" width="100" height="26" rx="4"/><text class="f-ink" x="130" y="197" text-anchor="middle" font-size="11.5">store both</text>
+  <line class="s-accent" x1="130" y1="230" x2="458" y2="230" stroke-width="1.5" marker-end="url(#ahB-2)"/>
+  <text x="295" y="224" text-anchor="middle" class="m f-ink" font-size="12">GET /dataservice/device  (Bearer token)</text>
+  <line class="s-green" x1="130" y1="262" x2="458" y2="262" stroke-width="1.5" marker-end="url(#ah-2)"/>
+  <text x="295" y="256" text-anchor="middle" class="m f-ink" font-size="12">POST …  Bearer + X-XSRF-TOKEN</text>
+  <text class="f-ink-3" x="615" y="262" font-size="11.5">every non-GET needs XSRF</text>
+  <line class="s-ink-3" x1="130" y1="285" x2="458" y2="285" stroke-width="1.2" stroke-dasharray="5 3" marker-end="url(#ah-2)"/>
+  <text x="295" y="279" text-anchor="middle" class="m f-ink-3" font-size="11.5">POST /jwt/refresh before expiry</text>
+</svg></div>
+<div class="cap">Figure 2 — JWT login. The csrf claim in the login response removes the extra call to /dataservice/client/token that the session method needs.</div></div>
+
+<div class="fig"><div class="scroll">
+<svg viewBox="0 0 900 200" xmlns="http://www.w3.org/2000/svg" font-size="12.5"><defs><marker id="ah-n1" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 z" class="f-ink-2"/></marker><marker id="ahB-n1" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 z" class="f-accent"/></marker></defs>
+  <rect x="60" y="20" width="140" height="34" rx="6" class="f-panel s-ink"/><text x="130" y="42" text-anchor="middle" font-weight="600" class="f-ink">Service account</text>
+  <rect x="380" y="20" width="160" height="34" rx="6" class="f-panel s-ink"/><text x="460" y="42" text-anchor="middle" font-weight="600" class="f-ink">Manager</text>
+  <rect x="700" y="20" width="140" height="34" rx="6" class="f-panel s-ink"/><text x="770" y="42" text-anchor="middle" font-weight="600" class="f-ink">User profile store</text>
+  <line x1="130" y1="54" x2="130" y2="190" class="s-rule" stroke-dasharray="3 4"/><line x1="460" y1="54" x2="460" y2="190" class="s-rule" stroke-dasharray="3 4"/><line x1="770" y1="54" x2="770" y2="190" class="s-rule" stroke-dasharray="3 4"/>
+  <line x1="130" y1="82" x2="458" y2="82" class="s-accent" stroke-width="1.5" marker-end="url(#ahB-n1)"/><text x="295" y="76" text-anchor="middle" class="m f-ink" font-size="12">GET /dataservice/client/token  Authorization: Bearer &lt;apikey&gt;</text>
+  <line x1="460" y1="104" x2="768" y2="104" class="s-ink-2" stroke-width="1.5" marker-end="url(#ah-n1)"/><text x="615" y="98" text-anchor="middle" class="f-ink-2">validate key → resolve roles</text>
+  <line x1="460" y1="128" x2="132" y2="128" class="s-ink-2" stroke-width="1.5" marker-end="url(#ah-n1)"/><text x="295" y="122" text-anchor="middle" class="m f-ink" font-size="12">200  "&lt;xsrf-token&gt;"  (plain string, no JSON)</text>
+  <line x1="130" y1="162" x2="458" y2="162" class="s-green" stroke-width="1.5" marker-end="url(#ah-n1)"/><text x="295" y="156" text-anchor="middle" class="m f-ink" font-size="12">POST …  Bearer &lt;apikey&gt; + X-XSRF-TOKEN</text>
+  <text x="615" y="162" class="f-ink-3" font-size="11.5">no login, no refresh, no logout</text>
+</svg></div>
+<div class="cap">Figure 2b — API-key flow (20.18+). Two headers on every call; the only round trip is fetching the XSRF token.</div></div>
+<h3>Implementation</h3>
+<div class="codebox"><button data-copy>Copy</button><pre><span class="c"># Python — minimal JWT client with refresh and XSRF handling</span>
+import requests, time
+
+class Manager:
+    def __init__(self, host, user, pw, duration=1800, verify=True):
+        self.base = f"https://{host}"; self.s = requests.Session(); self.s.verify = verify
+        self.user, self.pw, self.duration = user, pw, duration
+        self.login()
+
+    def login(self):
+        r = self.s.post(f"{self.base}/jwt/login",
+                        json={"username": self.user, "password": self.pw, "duration": self.duration})
+        r.raise_for_status(); body = r.json()
+        self.token, self.csrf = body["token"], body.get("csrf")
+        self.exp = time.time() + self.duration - 60
+        self.s.headers.update({"Authorization": f"Bearer {self.token}",
+                               "X-XSRF-TOKEN": self.csrf, "Content-Type": "application/json"})
+
+    def refresh(self):
+        r = self.s.post(f"{self.base}/jwt/refresh"); r.raise_for_status()
+        self.token = r.json()["token"]; self.exp = time.time() + self.duration - 60
+        self.s.headers["Authorization"] = f"Bearer {self.token}"
+
+    def call(self, method, path, **kw):
+        if time.time() > self.exp: self.refresh()
+        r = self.s.request(method, f"{self.base}/dataservice{path}", **kw)
+        if r.status_code == 401: self.login(); r = self.s.request(method, f"{self.base}/dataservice{path}", **kw)
+        r.raise_for_status(); return r.json()</pre></div>
+
+<div class="callout"><p><b>Session-method trap.</b> A failed <code>/j_security_check</code> returns HTTP 200 with an HTML login page in the body. Check for an <code>&lt;html&gt;</code> tag before assuming success. Some administrative calls (login, logout) signal success only through the body.</p></div>
+</section>
+
+<!-- ============ MECHANICS ============ -->
+<section id="mechanics">
+<h2>Pagination, rate limits, and async tasks</h2>
+<h3>Pagination follows the data source</h3>
+<div class="tbl"><table>
+<tr><th>Store</th><th>Parameters</th><th>Example</th><th>Notes</th></tr>
+<tr><td>Configuration DB</td><td><code>offset</code>, <code>limit</code></td><td><span class="ep"><b>GET</b> /template/feature?offset=1&amp;limit=10</span></td><td>Snapshot at call time; no consistency guarantee between calls</td></tr>
+<tr><td>Statistics DB</td><td><code>scrollId</code>, <code>count</code></td><td><span class="ep"><b>GET</b> /statistics/approute/page?scrollId=…&amp;count=10</span></td><td>scrollId expires after 10 minutes; loop until <code>hasMoreData</code> is false</td></tr>
+<tr><td>Device state cache</td><td><code>count</code>, <code>startId</code></td><td><span class="ep"><b>GET</b> /data/device/state/BFDSessions?count=1000</span></td><td><code>pageInfo.moreEntries</code>; pass returned <code>endId</code> as next <code>startId</code></td></tr>
+<tr><td>Device (real-time)</td><td>—</td><td><span class="ep dev"><b>GET</b> /device/bfd/sessions?deviceId=…</span></td><td>Pagination decided by the device</td></tr>
+</table></div>
+<p>Sorting and filtering are only available for device state and statistics APIs; the allowed field names for a table come from its <code>/fields</code> endpoint.</p>
+
+<h3>Rate limits</h3>
+<div class="tbl"><table>
+<tr><th>Limit</th><th>Value</th><th>Where it bites</th></tr>
+<tr><td>Bulk API (<code>/data/device/statistics/</code>)</td><td>48 requests/minute per node (from 20.6); from 20.10.1 requests are distributed across a cluster, so effective limit = per-node × node count</td><td>Statistics exports</td></tr>
+<tr><td>Bulk statistics concurrency</td><td>2 concurrent requests</td><td>Parallel exporters</td></tr>
+<tr><td>All other APIs</td><td>100 requests/second</td><td>Tight polling loops</td></tr>
+<tr><td>Concurrent sessions</td><td>250 on the Manager</td><td>Many scripts without logout</td></tr>
+<tr><td>Cisco SD-WAN Cloud (SaaS fabric via API gateway, 20.15+)</td><td>Real-time and bulk APIs are not available; other APIs limited to 10/s at the gateway and 5/s at the Manager; only certificate, configuration, inventory, monitoring and troubleshooting categories are exposed</td><td>Cisco-operated SaaS only — not Cisco-hosted control components</td></tr>
+</table></div>
+<p>The per-node bulk limit is tunable with <code>request nms server-proxy set ratelimit</code> followed by <code>request nms server-proxy restart</code> on every node. Exhausting a limit returns 429 with no <code>Retry-After</code> header, so back off on your own schedule.</p>
+
+<h3>Every write is a task</h3>
+<p>Configuration pushes and device actions return a task ID, not a result. Poll <span class="ep"><b>GET</b> /device/action/status/{taskId}</span> and read the <code>activity</code> array until <code>statusId</code> settles.</p>
+<div class="fig"><div class="scroll">
+<svg viewBox="0 0 900 250" xmlns="http://www.w3.org/2000/svg" font-size="12.5"><defs>
+    <marker id="ah-3" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 z" class="f-ink-2"/></marker>
+    <marker id="ahA-3" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 z" class="f-amber"/></marker>
+    <marker id="ahB-3" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 z" class="f-accent"/></marker>
+  </defs>
+  <rect class="f-panel s-ink" x="60" y="20" width="140" height="34" rx="6"/><text class="f-ink" x="130" y="42" text-anchor="middle" font-weight="600">Client</text>
+  <rect class="f-panel s-ink" x="380" y="20" width="160" height="34" rx="6"/><text class="f-ink" x="460" y="42" text-anchor="middle" font-weight="600">Manager task engine</text>
+  <rect class="f-amber-soft s-amber" x="700" y="20" width="140" height="34" rx="6"/><text class="f-ink" x="770" y="42" text-anchor="middle" font-weight="600">Device(s)</text>
+  <line class="s-rule" x1="130" y1="54" x2="130" y2="240" stroke-dasharray="3 4"/><line class="s-rule" x1="460" y1="54" x2="460" y2="240" stroke-dasharray="3 4"/><line class="s-rule" x1="770" y1="54" x2="770" y2="240" stroke-dasharray="3 4"/>
+  <line class="s-green" x1="130" y1="85" x2="458" y2="85" stroke-width="1.5" marker-end="url(#ah-3)"/><text x="295" y="79" text-anchor="middle" class="m f-ink" font-size="12">POST /v1/config-group/{id}/device/deploy</text>
+  <line class="s-ink-2" x1="460" y1="108" x2="132" y2="108" stroke-width="1.5" marker-end="url(#ah-3)"/><text x="295" y="102" text-anchor="middle" class="m f-ink" font-size="12">202 {parentTaskId}</text>
+  <line class="s-amber" x1="460" y1="130" x2="768" y2="130" stroke-width="1.5" marker-end="url(#ahA-3)"/><text class="f-ink-2" x="615" y="124" text-anchor="middle">push config over control plane</text>
+  <rect class="f-accent-soft s-accent" x="80" y="150" width="100" height="24" rx="4"/><text class="f-ink" x="130" y="166" text-anchor="middle" font-size="11.5">poll loop</text>
+  <line class="s-accent" x1="130" y1="190" x2="458" y2="190" stroke-width="1.5" marker-end="url(#ahB-3)"/><text x="295" y="184" text-anchor="middle" class="m f-ink" font-size="12">GET /device/action/status/{taskId}</text>
+  <line class="s-ink-2" x1="460" y1="212" x2="132" y2="212" stroke-width="1.5" marker-end="url(#ah-3)"/><text x="295" y="206" text-anchor="middle" class="m f-ink" font-size="12">{summary.status, data[].statusId, activity[]}</text>
+  <line class="s-ink-3" x1="770" y1="230" x2="462" y2="230" stroke-width="1.3" marker-end="url(#ah-3)"/><text class="f-ink-3" x="615" y="224" text-anchor="middle">per-device result</text>
+</svg></div>
+<div class="cap">Figure 3 — Asynchronous task pattern used by every configuration and action endpoint.</div></div>
+<div class="codebox"><button data-copy>Copy</button><pre>def wait_task(m, task_id, timeout=900):
+    t0 = time.time()
+    while time.time() - t0 &lt; timeout:
+        st = m.call("GET", f"/device/action/status/{task_id}")
+        if st["summary"]["status"] == "done":
+            return [(d["deviceIP"], d["statusId"]) for d in st["data"]]
+        time.sleep(8)
+    raise TimeoutError(task_id)</pre></div>
+<h3>RBAC (role-based access control)</h3>
+<p>Each operation in the OpenAPI spec carries an <code>x-roles-required</code> value such as <code>Template Deploy-write</code> or <code>Config Group &gt; Device &gt; Deploy-write</code>. Build service accounts from those values: a read-only monitoring group for collectors, and a separate <code>Settings-write</code> account only for webhook rule management.</p>
+</section>
+
+<!-- ============ ADMIN ============ -->
+<section id="admin">
+<h2>Administration and settings <span class="tag mgr">Configuration DB</span></h2>
+<p>Global Manager parameters, user and group management, tenants, software maintenance, and backup. Everything here reads and writes the configuration database; nothing touches a device except software install and reboot actions.</p>
+<div class="tbl"><table>
+<tr><th>Endpoint</th><th>Function</th><th>Use case</th></tr>
+<tr><td><span class="ep"><b>GET/POST</b> /admin/user</span></td><td>List and create users</td><td>Service accounts for collectors and CI/CD (continuous integration / continuous delivery)</td></tr>
+<tr><td><span class="ep"><b>GET/POST</b> /admin/usergroup</span></td><td>Groups as lists of features with read/write flags (Alarms, Audit Log, Device Monitoring, Template Deploy…)</td><td>Least-privilege roles</td></tr>
+<tr><td><span class="ep"><b>GET/POST</b> /admin/resourcegroup</span></td><td>Scope users to sites or regions</td><td>Regional NOC access</td></tr>
+<tr><td><span class="ep"><b>GET/POST</b> /settings/configuration/{type}</span></td><td>Org name, Validator address, certificate authorization, statistics collection settings</td><td>Day-0 automation</td></tr>
+<tr><td><span class="ep"><b>POST</b> /device/action/software</span>, <span class="ep"><b>/install</b></span>, <span class="ep"><b>/changepartition</b></span></td><td>Image upload, install, activate, set default</td><td>Upgrade pipelines</td></tr>
+<tr><td><span class="ep"><b>GET/POST</b> /tenant</span>, <span class="ep">/tenantbackup</span></td><td>Multitenant operations (Provider view)</td><td>MSP (managed service provider) onboarding</td></tr>
+<tr><td><span class="ep"><b>GET/PUT</b> /statistics/settings/disable/devicelist/{indexName}</span></td><td>Turn statistics collection on or off per index and device list</td><td>Reducing Manager load</td></tr>
+</table></div>
+<h3>How a user is created</h3>
+<ol class="steps">
+<li><span class="ep"><b>GET</b> /admin/usergroup</span> to confirm the group exists, or <span class="ep"><b>POST</b> /admin/usergroup</span> with the feature list.</li>
+<li><span class="ep"><b>POST</b> /admin/user</span> with <code>userName</code>, <code>password</code>, <code>group[]</code>, optional <code>resGroupName</code>.</li>
+<li>Verify with <span class="ep"><b>GET</b> /admin/user</span>; the password is never returned.</li>
+</ol>
+<div class="codebox"><button data-copy>Copy</button><pre>m.call("POST", "/admin/usergroup", json={
+  "groupName": "monitoring-ro",
+  "tasks": [{"feature": "Device Monitoring", "enabled": True, "read": True, "write": False},
+            {"feature": "Alarms",            "enabled": True, "read": True, "write": False},
+            {"feature": "Device Inventory",  "enabled": True, "read": True, "write": False}]})
+m.call("POST", "/admin/user", json={"userName": "svc-collector", "password": "…", "group": ["monitoring-ro"]})</pre></div>
+</section>
+
+<!-- ============ INVENTORY ============ -->
+<section id="inventory">
+<h2>Device inventory <span class="tag mgr">Configuration DB</span></h2>
+<p>The foundation for everything else: which devices exist, whether they are reachable, and what state their certificates and control connections are in. All served from the Manager's own database.</p>
+<div class="tbl"><table>
+<tr><th>Endpoint</th><th>Returns</th><th>Use case</th></tr>
+<tr><td><span class="ep"><b>GET</b> /device</span></td><td>All connected devices: system-ip, host-name, reachability, site-id, version, BFD session counts, OMP peer counts, control connections, uptime, coordinates. 26.1 adds a <code>site-id</code> filter.</td><td>CMDB (configuration management database) sync; health rollups</td></tr>
+<tr><td><span class="ep"><b>GET</b> /system/device/controllers</span></td><td>Validators, Controllers, Managers with certificate expiry, config sync state</td><td>Certificate watchdog</td></tr>
+<tr><td><span class="ep"><b>GET</b> /system/device/vedges</span></td><td>All WAN edges (vEdge and Catalyst IOS XE): cert state, <code>configOperationMode</code> (cli / vmanage), validity</td><td>Onboarding audits</td></tr>
+<tr><td><span class="ep"><b>POST</b> /system/device/fileupload</span></td><td>Upload the authorized serial file</td><td>ZTP (zero-touch provisioning) pipelines</td></tr>
+<tr><td><span class="ep"><b>PUT</b> /system/device/{uuid}</span> / <span class="ep">/decommission/{uuid}</span></td><td>Set valid/invalid/staging, decommission</td><td>Lifecycle</td></tr>
+<tr><td><span class="ep"><b>GET</b> /system/device/bootstrap/device/{uuid}</span></td><td>Generate bootstrap configuration</td><td>Day-0 shipping</td></tr>
+<tr><td><span class="ep"><b>GET</b> /device/models</span></td><td>Device models supported, interface naming per model</td><td>Template validation</td></tr>
+<tr><td><span class="ep"><b>GET</b> /health/devices/overview</span></td><td>Good / fair / poor counts (new shape in 26.1)</td><td>One-call fabric health</td></tr>
+</table></div>
+<div class="fig"><div class="scroll">
+<svg viewBox="0 0 900 190" xmlns="http://www.w3.org/2000/svg" font-size="12.5"><defs>
+    <marker id="ah-4" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 z" class="f-ink-2"/></marker>
+    <marker id="ahA-4" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 z" class="f-amber"/></marker>
+    <marker id="ahB-4" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 z" class="f-accent"/></marker>
+  </defs>
+  <rect class="f-panel s-ink" x="60" y="20" width="140" height="34" rx="6"/><text class="f-ink" x="130" y="42" text-anchor="middle" font-weight="600">Client</text>
+  <rect class="f-panel s-ink" x="380" y="20" width="160" height="34" rx="6"/><text class="f-ink" x="460" y="42" text-anchor="middle" font-weight="600">Manager</text>
+  <rect class="f-accent-soft s-accent" x="700" y="20" width="140" height="34" rx="6"/><text class="f-ink" x="770" y="42" text-anchor="middle" font-weight="600">Configuration DB</text>
+  <line class="s-rule" x1="130" y1="54" x2="130" y2="180" stroke-dasharray="3 4"/><line class="s-rule" x1="460" y1="54" x2="460" y2="180" stroke-dasharray="3 4"/><line class="s-rule" x1="770" y1="54" x2="770" y2="180" stroke-dasharray="3 4"/>
+  <line class="s-accent" x1="130" y1="85" x2="458" y2="85" stroke-width="1.5" marker-end="url(#ahB-4)"/><text x="295" y="79" text-anchor="middle" class="m f-ink" font-size="12">GET /device?site-id=100</text>
+  <line class="s-ink-2" x1="460" y1="108" x2="768" y2="108" stroke-width="1.5" marker-end="url(#ah-4)"/><text class="f-ink-2" x="615" y="102" text-anchor="middle">query inventory + last known reachability</text>
+  <line class="s-ink-2" x1="770" y1="130" x2="462" y2="130" stroke-width="1.5" marker-end="url(#ah-4)"/>
+  <line class="s-ink-2" x1="460" y1="155" x2="132" y2="155" stroke-width="1.5" marker-end="url(#ah-4)"/><text x="295" y="149" text-anchor="middle" class="m f-ink" font-size="12">200 {data:[{system-ip, reachability, …}]}</text>
+  <text class="f-ink-3" x="615" y="172" text-anchor="middle" font-size="11.5">no device is contacted</text>
+</svg></div>
+<div class="cap">Figure 4 — Inventory reads never reach a device; reachability is the Manager's last known control-connection state.</div></div>
+<div class="codebox"><button data-copy>Copy</button><pre>devices = m.call("GET", "/device")["data"]
+down = [d for d in devices if d.get("reachability") != "reachable"]
+print(f"{len(devices)} devices, {len(down)} unreachable")</pre></div>
+</section>
+
+<!-- ============ UX1 ============ -->
+<section id="ux1">
+<h2>UX 1.0 — templates and centralized policy <span class="tag cfg">Writes config</span></h2>
+<p>UX (user experience) 1.0 is the template era: feature templates compose into device templates, which are attached to devices with per-device variables. Centralized policy is assembled and activated on the Controller. Still the majority of brownfield estates.</p>
+<div class="tbl"><table>
+<tr><th>Endpoint</th><th>Function</th></tr>
+<tr><td><span class="ep"><b>GET/POST</b> /template/feature</span>, <span class="ep">/template/feature/object/{id}</span>, <span class="ep">/template/feature/types</span></td><td>Feature templates (system, VPN, interface, BFD…)</td></tr>
+<tr><td><span class="ep"><b>GET</b> /template/device</span>, <span class="ep"><b>POST</b> /template/device/feature</span>, <span class="ep"><b>POST</b> /template/device/cli</span>, <span class="ep"><b>GET</b> /template/device/object/{id}</span></td><td>Device templates; the object call returns full JSON (clone pattern)</td></tr>
+<tr><td><span class="ep"><b>POST</b> /template/device/config/input</span></td><td>Generate the variable sheet for templateId + deviceIds</td></tr>
+<tr><td><span class="ep"><b>POST</b> /template/device/config/config</span></td><td>Preview the rendered configuration</td></tr>
+<tr><td><span class="ep"><b>POST</b> /template/device/config/attachfeature</span> / <span class="ep">/attachcli</span></td><td>Push; returns a task ID</td></tr>
+<tr><td><span class="ep"><b>POST</b> /template/config/device/mode/cli</span></td><td>Detach (return to CLI mode)</td></tr>
+<tr><td><span class="ep">/template/policy/list/*</span>, <span class="ep">/template/policy/definition/*</span>, <span class="ep">/template/policy/vsmart</span>, <span class="ep">/template/policy/vedge</span>, <span class="ep">/template/policy/security</span></td><td>Lists (site, VPN, prefix, SLA, apps), definitions (control, data, app-route, cflowd, hub-and-spoke, mesh, zone-based firewall), centralized, localized, security policy</td></tr>
+</table></div>
+<div class="fig"><div class="scroll">
+<svg viewBox="0 0 900 330" xmlns="http://www.w3.org/2000/svg" font-size="12.5"><defs>
+    <marker id="ah-5" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 z" class="f-ink-2"/></marker>
+    <marker id="ahA-5" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 z" class="f-amber"/></marker>
+    <marker id="ahB-5" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 z" class="f-accent"/></marker>
+  </defs>
+  <rect class="f-panel s-ink" x="60" y="20" width="140" height="34" rx="6"/><text class="f-ink" x="130" y="42" text-anchor="middle" font-weight="600">Client</text>
+  <rect class="f-panel s-ink" x="380" y="20" width="160" height="34" rx="6"/><text class="f-ink" x="460" y="42" text-anchor="middle" font-weight="600">Manager</text>
+  <rect class="f-amber-soft s-amber" x="700" y="20" width="140" height="34" rx="6"/><text class="f-ink" x="770" y="42" text-anchor="middle" font-weight="600">Edge router</text>
+  <line class="s-rule" x1="130" y1="54" x2="130" y2="320" stroke-dasharray="3 4"/><line class="s-rule" x1="460" y1="54" x2="460" y2="320" stroke-dasharray="3 4"/><line class="s-rule" x1="770" y1="54" x2="770" y2="320" stroke-dasharray="3 4"/>
+  <line class="s-green" x1="130" y1="80" x2="458" y2="80" stroke-width="1.5" marker-end="url(#ah-5)"/><text x="295" y="74" text-anchor="middle" class="m f-ink" font-size="12">1  POST …/config/input {templateId, deviceIds}</text>
+  <line class="s-ink-2" x1="460" y1="102" x2="132" y2="102" stroke-width="1.5" marker-end="url(#ah-5)"/><text class="f-ink-2" x="295" y="96" text-anchor="middle">keys: //system/host-name, //system/system-ip, //system/site-id</text>
+  <line class="s-green" x1="130" y1="135" x2="458" y2="135" stroke-width="1.5" marker-end="url(#ah-5)"/><text x="295" y="129" text-anchor="middle" class="m f-ink" font-size="12">2  POST …/config/config {device:[values]}</text>
+  <line class="s-ink-2" x1="460" y1="157" x2="132" y2="157" stroke-width="1.5" marker-end="url(#ah-5)"/><text class="f-ink-2" x="295" y="151" text-anchor="middle">rendered configuration for review / diff</text>
+  <line class="s-green" x1="130" y1="190" x2="458" y2="190" stroke-width="1.5" marker-end="url(#ah-5)"/><text x="295" y="184" text-anchor="middle" class="m f-ink" font-size="12">3  POST …/config/attachfeature</text>
+  <line class="s-ink-2" x1="460" y1="212" x2="132" y2="212" stroke-width="1.5" marker-end="url(#ah-5)"/><text x="295" y="206" text-anchor="middle" class="m f-ink" font-size="12">{id: taskId}</text>
+  <line class="s-amber" x1="460" y1="235" x2="768" y2="235" stroke-width="1.5" marker-end="url(#ahA-5)"/><text class="f-ink-2" x="615" y="229" text-anchor="middle">NETCONF push · commit · verify</text>
+  <line class="s-ink-3" x1="770" y1="258" x2="462" y2="258" stroke-width="1.3" marker-end="url(#ah-5)"/><text class="f-ink-3" x="615" y="252" text-anchor="middle">success / rollback</text>
+  <line class="s-accent" x1="130" y1="290" x2="458" y2="290" stroke-width="1.5" marker-end="url(#ahB-5)"/><text x="295" y="284" text-anchor="middle" class="m f-ink" font-size="12">4  GET /device/action/status/{taskId}  (loop)</text>
+  <line class="s-ink-2" x1="460" y1="312" x2="132" y2="312" stroke-width="1.5" marker-end="url(#ah-5)"/><text class="f-ink-2" x="295" y="306" text-anchor="middle">statusId: success</text>
+</svg></div>
+<div class="cap">Figure 5 — The four-step template attach. Steps 1–2 are safe dry runs; step 3 is the only write.</div></div>
+<div class="codebox"><button data-copy>Copy</button><pre>tpl = "a1b2…"; dev = "C8K-…uuid"
+sheet = m.call("POST", "/template/device/config/input",
+               json={"templateId": tpl, "deviceIds": [dev], "isEdited": False, "isMasterEdited": False})
+row = sheet["data"][0]
+row.update({"//system/host-name": "BR-100-R1", "//system/system-ip": "10.255.1.1", "//system/site-id": "100"})
+task = m.call("POST", "/template/device/config/attachfeature",
+              json={"deviceTemplateList": [{"templateId": tpl, "device": [row], "isEdited": False, "isMasterEdited": False}]})
+print(wait_task(m, task["id"]))</pre></div>
+</section>
+
+<!-- ============ UX2 ============ -->
+<section id="ux2">
+<h2>UX 2.0 — configuration groups and feature profiles <span class="tag cfg">Writes config</span></h2>
+<p>The strategic direction for new deployments. A configuration group is a bundle of feature profiles (system, transport, service, policy-object, CLI, other); devices are associated to the group, receive per-device variables, and are deployed in one task. Policy groups and topology groups follow the same CRUD (create, read, update, delete) + associate + deploy pattern.</p>
+<div class="tbl"><table>
+<tr><th>Endpoint</th><th>Function</th></tr>
+<tr><td><span class="ep"><b>POST/GET</b> /v1/config-group</span>, <span class="ep"><b>PUT/DELETE</b> /v1/config-group/{id}</span></td><td>Group lifecycle</td></tr>
+<tr><td><span class="ep"><b>PUT</b> /v1/config-group/{id}/device/associate</span></td><td>Bind devices</td></tr>
+<tr><td><span class="ep"><b>PUT</b> /v1/config-group/{id}/device/variables</span></td><td>Per-device variable values</td></tr>
+<tr><td><span class="ep"><b>POST</b> /v1/config-group/{id}/device/deploy</span></td><td>Deploy; returns task ID; role <code>Config Group &gt; Device &gt; Deploy-write</code></td></tr>
+<tr><td><span class="ep">/v1/policy-group</span>, <span class="ep">/v1/topology-group</span></td><td>Same pattern for policy and topology</td></tr>
+<tr><td><span class="ep">/v1/network-hierarchy</span></td><td>Regions and sites that groups reference</td></tr>
+<tr><td><span class="ep">/v1/feature-profile/sdwan/{system|transport|service|policy-object|cli|other}/{profileId}/{feature}</span></td><td>Parcel-level features, e.g. <code>…/system/{id}/aaa</code>, <code>…/system/{id}/omp</code>, <code>…/transport/{id}/wan/vpn/{vpnId}/interface/ethernet</code>, <code>…/service/{id}/lan/vpn</code></td></tr>
+<tr><td><span class="ep">/v1/feature-profile/sd-routing/…</span></td><td>Same model for autonomous (non-SD-WAN) routers, e.g. <code>…/cli/{cliId}/full-config/{fullConfigId}</code></td></tr>
+</table></div>
+<div class="fig"><div class="scroll">
+<svg viewBox="0 0 900 250" xmlns="http://www.w3.org/2000/svg" font-size="12.5"><defs>
+    <marker id="ah-6" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 z" class="f-ink-2"/></marker>
+    <marker id="ahA-6" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 z" class="f-amber"/></marker>
+    <marker id="ahB-6" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 z" class="f-accent"/></marker>
+  </defs>
+  <g class="f-ink" font-weight="600">
+    <rect class="f-green-soft s-green" x="20" y="90" width="150" height="56" rx="8"/><text x="95" y="114" text-anchor="middle">1 Create profiles</text><text class="f-ink-2" x="95" y="132" text-anchor="middle" font-weight="400" font-size="11.5">system · transport · service</text>
+    <rect class="f-green-soft s-green" x="200" y="90" width="150" height="56" rx="8"/><text x="275" y="114" text-anchor="middle">2 Create group</text><text class="f-ink-2" x="275" y="132" text-anchor="middle" font-weight="400" font-size="11.5">POST /v1/config-group</text>
+    <rect class="f-green-soft s-green" x="380" y="90" width="150" height="56" rx="8"/><text x="455" y="114" text-anchor="middle">3 Associate devices</text><text class="f-ink-2" x="455" y="132" text-anchor="middle" font-weight="400" font-size="11.5">PUT …/device/associate</text>
+    <rect class="f-green-soft s-green" x="560" y="90" width="150" height="56" rx="8"/><text x="635" y="114" text-anchor="middle">4 Set variables</text><text class="f-ink-2" x="635" y="132" text-anchor="middle" font-weight="400" font-size="11.5">PUT …/device/variables</text>
+    <rect class="f-amber-soft s-amber" x="740" y="90" width="140" height="56" rx="8"/><text x="810" y="114" text-anchor="middle">5 Deploy</text><text class="f-ink-2" x="810" y="132" text-anchor="middle" font-weight="400" font-size="11.5">POST …/device/deploy</text>
+  </g>
+  <g class="s-ink-2 f-none" stroke-width="1.5">
+    <line x1="170" y1="118" x2="198" y2="118" marker-end="url(#ah-6)"/><line x1="350" y1="118" x2="378" y2="118" marker-end="url(#ah-6)"/><line x1="530" y1="118" x2="558" y2="118" marker-end="url(#ah-6)"/><line x1="710" y1="118" x2="738" y2="118" marker-end="url(#ah-6)"/>
+  </g>
+  <path class="s-accent f-none" d="M810,146 C810,200 500,200 130,200 L130,175" stroke-width="1.4" stroke-dasharray="5 3" marker-end="url(#ahB-6)"/>
+  <text class="f-accent" x="470" y="216" text-anchor="middle" font-size="11.5">task ID → GET /device/action/status/{id} → per-device statusId</text>
+  <text class="f-ink-3" x="450" y="50" text-anchor="middle" font-size="12">Steps 1–4 write only to the configuration DB. Step 5 is the only device contact.</text>
+</svg></div>
+<div class="cap">Figure 6 — Configuration group lifecycle. Variables are typically injected from IPAM (IP address management) or an ITSM (IT service management) record.</div></div>
+<div class="codebox"><button data-copy>Copy</button><pre>gid = m.call("POST", "/v1/config-group", json={"name": "branch-std", "solution": "sdwan", "description": "Standard branch",
+              "profiles": [{"id": SYSTEM_PROFILE}, {"id": TRANSPORT_PROFILE}, {"id": SERVICE_PROFILE}]})["id"]
+m.call("PUT", f"/v1/config-group/{gid}/device/associate", json={"devices": [{"id": dev}]})
+m.call("PUT", f"/v1/config-group/{gid}/device/variables",
+       json={"solution": "sdwan", "devices": [{"device-id": dev,
+             "variables": [{"name": "host_name", "value": "BR-100-R1"}, {"name": "system_ip", "value": "10.255.1.1"}, {"name": "site_id", "value": 100}]}]})
+task = m.call("POST", f"/v1/config-group/{gid}/device/deploy", json={"devices": [{"id": dev}]})
+wait_task(m, task["parentTaskId"])</pre></div>
+</section>
+
+<!-- ============ SERVICES ============ -->
+<section id="services">
+<h2>SD-WAN services and partner integrations <span class="tag cfg">Writes config</span></h2>
+<div class="grid2">
+<div><h3>SD-WAN services</h3>
+<ul class="tight">
+<li><span class="ep">/multicloud/*</span> — cloud account onboarding (AWS, Azure, GCP), cloud gateway creation, VPC/VNet discovery and intent mapping.</li>
+<li><span class="ep">/template/cloudx/*</span> — Cloud OnRamp for SaaS application enablement and DIA (direct Internet access) probes.</li>
+<li><span class="ep">/cloudservices/*</span> — cloud service tokens and Microsoft 365 preferred-path settings (26.1 changed the M365 request schema).</li>
+<li>26.1 deprecates the <span class="ep">/dca/*</span> data-collection endpoints.</li>
+</ul></div>
+<div><h3>Partner integrations</h3>
+<ul class="tight">
+<li>Webex and Cisco Secure Access / SIG (secure Internet gateway) credentials and tunnel objects.</li>
+<li>ThousandEyes Enterprise Agent enablement — a Docker container on IOS XE edges from 17.6.1, configured as a feature-profile parcel (<code>…/other/{id}/thousandeyes</code>).</li>
+<li>SSE (security service edge) tunnel automation.</li>
+</ul></div>
+</div>
+<div class="fig"><div class="scroll">
+<svg viewBox="0 0 900 200" xmlns="http://www.w3.org/2000/svg" font-size="12.5"><defs>
+    <marker id="ah-7" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 z" class="f-ink-2"/></marker>
+    <marker id="ahA-7" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 z" class="f-amber"/></marker>
+    <marker id="ahB-7" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 z" class="f-accent"/></marker>
+  </defs>
+  <g class="f-ink" font-weight="600">
+    <rect class="f-panel s-ink" x="20" y="70" width="180" height="56" rx="8"/><text x="110" y="94" text-anchor="middle">Client</text><text class="f-ink-2" x="110" y="112" text-anchor="middle" font-weight="400" font-size="11.5">POST /multicloud/accounts</text>
+    <rect class="f-accent-soft s-accent" x="260" y="70" width="180" height="56" rx="8"/><text x="350" y="94" text-anchor="middle">Manager</text><text class="f-ink-2" x="350" y="112" text-anchor="middle" font-weight="400" font-size="11.5">stores account, discovers VPCs</text>
+    <rect class="f-panel s-ink-3" x="500" y="70" width="180" height="56" rx="8"/><text x="590" y="94" text-anchor="middle">Cloud provider API</text><text class="f-ink-2" x="590" y="112" text-anchor="middle" font-weight="400" font-size="11.5">creates gateway VMs / transit</text>
+    <rect class="f-amber-soft s-amber" x="720" y="70" width="160" height="56" rx="8"/><text x="800" y="94" text-anchor="middle">Cloud gateway edges</text><text class="f-ink-2" x="800" y="112" text-anchor="middle" font-weight="400" font-size="11.5">join overlay via Validator</text>
+  </g>
+  <g class="s-ink-2 f-none" stroke-width="1.5"><line x1="200" y1="98" x2="258" y2="98" marker-end="url(#ah-7)"/><line x1="440" y1="98" x2="498" y2="98" marker-end="url(#ah-7)"/><line x1="680" y1="98" x2="718" y2="98" marker-end="url(#ah-7)"/></g>
+  <text class="f-ink-3" x="450" y="165" text-anchor="middle" font-size="12">Every step is a task; poll /device/action/status/{id}. The Manager, not your client, talks to the cloud provider.</text>
+</svg></div>
+<div class="cap">Figure 7 — Multicloud gateway creation. Your client never holds cloud credentials; they are stored on the Manager.</div></div>
+</section>
+
+<!-- ============ HOW TO CHOOSE ============ -->
+<section id="choose">
+<h2>How to choose</h2>
+<p>Three monitoring API categories read from different places. Pick by the question you are answering, not by the endpoint you already know.</p>
+<div class="tbl"><table>
+<tr><th>Requirement</th><th>Use</th><th>Path prefix</th></tr>
+<tr><td>What is happening on this device right now?</td><td><a href="#realtime">Real-time</a></td><td><code>/device</code></td></tr>
+<tr><td>What happened over a time range?</td><td><a href="#stats">Statistics</a></td><td><code>/statistics</code></td></tr>
+<tr><td>Data for many devices or a very large result set?</td><td>Bulk (<a href="#state">state</a>, <a href="#stats">statistics</a>)</td><td><code>/data</code>, <code>/v2/data</code></td></tr>
+<tr><td>How often can I call these safely?</td><td><a href="#guidance">Guidance</a></td><td>—</td></tr>
+<tr><td>Which API for a common task?</td><td><a href="#usecases">Customer questions</a></td><td>—</td></tr>
+</table></div>
+<div class="fig" id="fig0">
+<div class="bar" style="flex-wrap:wrap">
+  <button type="button" id="f0pp">Pause</button>
+  <button type="button" id="f0rt">Trigger real-time call</button>
+  <button type="button" id="f0al">Raise an alarm</button>
+  <label style="font:12px var(--sans);color:var(--ink-3);display:flex;align-items:center;gap:6px">Speed <input id="f0sp" type="range" min="1" max="20" step="1" value="4" style="width:100px"> <span id="f0spv">4 min/s</span></label>
+  <span>Clock <b id="f0clk" style="color:var(--ink);font-family:var(--mono)">00:00</b></span>
+</div>
+<div class="scroll">
+<svg viewBox="0 0 900 480" xmlns="http://www.w3.org/2000/svg" font-size="12.5" id="f0svg">
+  <defs><marker id="ah-f0" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 z" class="f-ink-2"/></marker></defs>
+  <rect x="40" y="24" width="170" height="44" rx="8" class="f-panel s-ink-3"/><text x="125" y="41" text-anchor="middle" font-weight="600" class="f-ink">Validator</text><text x="125" y="58" text-anchor="middle" class="f-ink-2" font-size="11.5">DTLS auth on join</text>
+  <rect x="300" y="24" width="300" height="44" rx="8" class="f-panel s-ink-3"/><text x="450" y="41" text-anchor="middle" font-weight="600" class="f-ink">Controller</text><text x="450" y="58" text-anchor="middle" class="f-ink-2" font-size="11.5">OMP routes and policy, continuous</text>
+  <rect x="40" y="130" width="170" height="56" rx="8" class="f-green-soft s-green"/><text x="125" y="152" text-anchor="middle" font-weight="600" class="f-ink">WAN edge 1</text><text x="125" y="170" text-anchor="middle" class="f-ink-2" font-size="11.5">exports on timers</text>
+  <rect x="40" y="220" width="170" height="56" rx="8" class="f-green-soft s-green"/><text x="125" y="242" text-anchor="middle" font-weight="600" class="f-ink">WAN edge 2</text><text x="125" y="260" text-anchor="middle" class="f-ink-2" font-size="11.5">exports on timers</text>
+  <rect x="40" y="310" width="170" height="56" rx="8" class="f-green-soft s-green"/><text x="125" y="332" text-anchor="middle" font-weight="600" class="f-ink">WAN edge 3</text><text x="125" y="350" text-anchor="middle" class="f-ink-2" font-size="11.5">exports on timers</text>
+  <rect x="300" y="96" width="300" height="340" rx="14" class="f-none s-rule" stroke-dasharray="4 3"/>
+  <text x="450" y="114" text-anchor="middle" font-weight="600" class="f-ink">SD-WAN Manager</text>
+  <rect x="320" y="134" width="260" height="40" rx="6" class="f-accent-soft s-accent"/><text x="450" y="148" text-anchor="middle" font-weight="600" class="f-ink">State cache</text><text x="450" y="164" text-anchor="middle" class="f-ink-2" font-size="11.5">sync about every minute</text>
+  <rect x="320" y="188" width="260" height="40" rx="6" class="f-accent-soft s-accent"/><text x="450" y="202" text-anchor="middle" font-weight="600" class="f-ink">Statistics DB</text><text x="450" y="218" text-anchor="middle" class="f-ink-2" font-size="11.5">5, 10 and 30 min exports</text>
+  <rect x="320" y="242" width="260" height="40" rx="6" class="f-accent-soft s-accent"/><text x="450" y="256" text-anchor="middle" font-weight="600" class="f-ink">Alarm engine</text><text x="450" y="272" text-anchor="middle" class="f-ink-2" font-size="11.5">events on arrival</text>
+  <rect x="320" y="296" width="260" height="124" rx="6" class="f-amber-soft s-amber"/><text x="450" y="313" text-anchor="middle" font-weight="600" class="f-ink">API rate limits</text><text x="450" y="333" text-anchor="middle" class="f-ink-2" font-size="11.5">bulk 48/min per node, 2 concurrent</text><text x="450" y="350" text-anchor="middle" class="f-ink-2" font-size="11.5">other APIs 100/s</text><text x="450" y="367" text-anchor="middle" class="f-ink-2" font-size="11.5">250 sessions, 100 per user</text><text x="450" y="384" text-anchor="middle" class="f-ink-2" font-size="11.5">429 has no Retry-After</text><text x="450" y="404" text-anchor="middle" class="f-ink" font-size="11.5" font-weight="600" id="f0rl">bulk in flight: 0 / 2</text>
+  <rect x="690" y="130" width="170" height="56" rx="8" class="f-accent-soft s-accent"/><text x="775" y="152" text-anchor="middle" font-weight="600" class="f-ink">Collector</text><text x="775" y="170" text-anchor="middle" class="f-ink-2" font-size="11.5">polls the Manager</text>
+  <rect x="690" y="220" width="170" height="56" rx="8" class="f-panel s-ink-3"/><text x="775" y="242" text-anchor="middle" font-weight="600" class="f-ink">ITSM tool</text><text x="775" y="260" text-anchor="middle" class="f-ink-2" font-size="11.5">receives webhooks</text>
+  <rect x="690" y="310" width="170" height="56" rx="8" class="f-amber-soft s-amber"/><text x="775" y="332" text-anchor="middle" font-weight="600" class="f-ink">Engineer</text><text x="775" y="350" text-anchor="middle" class="f-ink-2" font-size="11.5">real-time, on demand</text>
+  <line x1="125" y1="68" x2="125" y2="128" class="s-ink-3" stroke-width="0.8" stroke-dasharray="3 3"/>
+  <line x1="210" y1="46" x2="298" y2="46" class="s-ink-3" stroke-width="0.8" stroke-dasharray="3 3"/>
+  <line x1="450" y1="68" x2="450" y2="94" class="s-ink-3" stroke-width="0.8" stroke-dasharray="3 3"/>
+  <g id="f0lines" fill="none" stroke-width="0.8"></g>
+  <g id="f0pk"></g>
+  <text x="450" y="458" text-anchor="middle" class="f-ink-3" font-size="11.5">Dot colour: green = device export · blue = client call · amber = reaches the router · pink = webhook</text>
+</svg>
+</div>
+<div class="cap" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:4px 18px;line-height:1.5">
+  <span><i style="display:inline-block;width:10px;height:10px;border-radius:50%;background:#2C7A5B;margin-right:6px;vertical-align:-1px"></i>Interface stats every 5 min</span>
+  <span><i style="display:inline-block;width:10px;height:10px;border-radius:50%;background:#1F5C45;margin-right:6px;vertical-align:-1px"></i>App-route every 10 min</span>
+  <span><i style="display:inline-block;width:10px;height:10px;border-radius:50%;background:#143D2E;margin-right:6px;vertical-align:-1px"></i>Collection interval every 30 min</span>
+  <span><i style="display:inline-block;width:10px;height:10px;border-radius:50%;background:#5FC493;margin-right:6px;vertical-align:-1px"></i>State sync about every 1 min</span>
+  <span><i style="display:inline-block;width:10px;height:10px;border-radius:50%;background:#0A7BB8;margin-right:6px;vertical-align:-1px"></i>Collector: bulk state every 5 min</span>
+  <span><i style="display:inline-block;width:10px;height:10px;border-radius:50%;background:#12324A;margin-right:6px;vertical-align:-1px"></i>Collector: statistics once per 30 min</span>
+  <span><i style="display:inline-block;width:10px;height:10px;border-radius:50%;background:#D4537E;margin-right:6px;vertical-align:-1px"></i>Webhook push on alarm</span>
+  <span><i style="display:inline-block;width:10px;height:10px;border-radius:50%;background:#B7791F;margin-right:6px;vertical-align:-1px"></i>Real-time NETCONF, one router, on demand</span>
+</div>
+<div class="cap" id="f0log" style="font-family:var(--mono);min-height:3.4em;white-space:pre-line"></div>
+<div class="cap">Figure 0 — Who talks to whom, how often, and within which limits. Device export timers set statistics freshness (interface 5 min, app-route 10 min, collection interval 30 min default, range 5–180); the collector polls at the same cadence; alarms are pushed; only the engineer's real-time call reaches a router. State-sync cadence is illustrative — Cisco documents it only as periodic.</div>
+</div>
+<script>
+(function(){
+var L=document.getElementById('f0lines'),PK=document.getElementById('f0pk'),log=document.getElementById('f0log'),clk=document.getElementById('f0clk'),rl=document.getElementById('f0rl');
+var edges=[[210,158],[210,248],[210,338]],st=[320,154],db=[320,208],ae=[320,262],px=[580,358],col=[690,158],itsm=[690,248],eng=[690,338];
+function line(a,b,c){var l=document.createElementNS('http://www.w3.org/2000/svg','line');l.setAttribute('x1',a[0]);l.setAttribute('y1',a[1]);l.setAttribute('x2',b[0]);l.setAttribute('y2',b[1]);l.setAttribute('stroke',c);L.appendChild(l);}
+edges.forEach(function(e){line(e,st,'#9FD9BE');line(e,db,'#9FD9BE');line(e,ae,'#9FD9BE');});
+line(col,px,'#9CC9EA');line(itsm,[580,262],'#F1B9CB');line(eng,px,'#F2CF8C');
+var flows=[
+ {n:'interface stats',every:5,from:'edges',to:db,c:'#2C7A5B'},
+ {n:'app-route stats',every:10,from:'edges',to:db,c:'#1F5C45',off:2},
+ {n:'collection interval (DPI etc.)',every:30,from:'edges',to:db,c:'#143D2E',off:7},
+ {n:'state sync',every:1,from:'edges',to:st,c:'#5FC493',off:0.3},
+ {n:'GET /data/device/state (bulk)',every:5,from:col,to:px,c:'#0A7BB8',off:1,bulk:true},
+ {n:'POST /statistics aggregation',every:30,from:col,to:px,c:'#12324A',off:12}
+];
+var t=0,speed=4,run=true,last=null,pk=[],bulk=0,lines=[];
+function hhmm(){return ('0'+Math.floor(t/60)%24).slice(-2)+':'+('0'+Math.floor(t%60)).slice(-2);}
+function say(s){lines.unshift(hhmm()+'  '+s);lines=lines.slice(0,3);log.textContent=lines.join('\n');}
+function packet(a,b,c,dur,cb){var e=document.createElementNS('http://www.w3.org/2000/svg','circle');e.setAttribute('r',5);e.setAttribute('fill',c);e.setAttribute('stroke','var(--panel)');e.setAttribute('stroke-width',1.5);PK.appendChild(e);pk.push({e:e,a:a,b:b,s:performance.now(),d:dur,cb:cb});}
+function fire(f){var dur=900;if(f.from==='edges'){edges.forEach(function(e,i){setTimeout(function(){packet(e,f.to,f.c,dur);},i*120);});}else{packet(f.from,f.to,f.c,dur,f.bulk?function(){bulk++;rl.textContent='bulk in flight: '+bulk+' / 2';setTimeout(function(){bulk--;rl.textContent='bulk in flight: '+bulk+' / 2';},1200);}:null);}say(f.n);}
+flows.forEach(function(f){f.next=(f.off||0);});
+document.getElementById('f0rt').onclick=function(){var e=edges[1];say('GET /device/bfd/sessions?deviceId= (engineer)');packet(eng,px,'#B7791F',700,function(){packet(px,e,'#B7791F',900,function(){packet(e,px,'#B7791F',900,function(){packet(px,eng,'#B7791F',700);});});});};
+document.getElementById('f0al').onclick=function(){var e=edges[2];say('BFD down event, alarm raised, webhook sent');packet(e,ae,'#D4537E',800,function(){packet(ae,itsm,'#D4537E',900);});};
+document.getElementById('f0pp').onclick=function(){run=!run;this.textContent=run?'Pause':'Play';};
+document.getElementById('f0sp').oninput=function(){speed=+this.value;document.getElementById('f0spv').textContent=speed+' min/s';};
+var reduce=window.matchMedia('(prefers-reduced-motion: reduce)').matches;if(reduce){run=false;document.getElementById('f0pp').textContent='Play';}
+function frame(now){if(last===null)last=now;var dt=(now-last)/1000;last=now;if(run){t+=dt*speed;clk.textContent=hhmm();flows.forEach(function(f){if(t>=f.next){fire(f);f.next+=f.every;}});}
+for(var i=pk.length-1;i>=0;i--){var p=pk[i],u=Math.min(1,(now-p.s)/p.d);p.e.setAttribute('cx',p.a[0]+(p.b[0]-p.a[0])*u);p.e.setAttribute('cy',p.a[1]+(p.b[1]-p.a[1])*u);if(u>=1){p.e.remove();pk.splice(i,1);if(p.cb)p.cb();}}
+requestAnimationFrame(frame);}
+requestAnimationFrame(frame);
+})();
+</script>
+</section>
+
+<!-- ============ USE CASES ============ -->
+<section id="usecases">
+<h2>Customer questions → endpoints <span class="tag mgr">Statistics DB</span></h2>
+<p>NOCs (network operations centres) don't ask for endpoint families; they ask "is site 90 healthy?" This table maps the common questions to the scalable endpoint and to the troubleshooting-only equivalent. Every scalable row is served from the Manager; none touches a device.</p>
+<div class="tbl"><table>
+<tr><th>Question</th><th>Scalable endpoint (poll this)</th><th>Troubleshooting-only equivalent</th></tr>
+<tr><td>Which devices are at a site, and are they reachable?</td><td><span class="ep"><b>GET</b> /device?site-id={id}</span></td><td>—</td></tr>
+<tr><td>Is each WAN edge healthy (good / fair / poor)?</td><td><span class="ep"><b>GET</b> /statistics/devicehealth/overview/cpu?last_n_hours=1&amp;limit=100</span> (optionally <code>&amp;site=</code>). Manager-calculated score from CPU, memory, QoE, reachability</td><td><span class="ep dev"><b>GET</b> /device/system/status?deviceId=</span></td></tr>
+<tr><td>What did CPU, memory and disk look like over time?</td><td><span class="ep"><b>POST</b> /statistics/system</span> with <code>entry_time</code> and <code>vdevice_name</code> rules</td><td>same</td></tr>
+<tr><td>How good is each tunnel path (latency / jitter / loss)?</td><td><span class="ep"><b>POST</b> /statistics/approute/aggregation</span> grouped by <code>local_system_ip, local_color, remote_system_ip, remote_color</code></td><td><span class="ep dev"><b>GET</b> /device/app-route/statistics?deviceId=</span></td></tr>
+<tr><td>Is a circuit (transport) up right now?</td><td><span class="ep"><b>GET</b> /data/device/state/BFDSessions?count=</span> grouped client-side by device + <code>local-color</code></td><td><span class="ep dev"><b>GET</b> /device/bfd/sessions?deviceId=</span></td></tr>
+<tr><td>How good was each circuit historically?</td><td><span class="ep"><b>POST</b> /statistics/approute/aggregation</span> grouped by <code>vdevice_name, local_color</code></td><td>—</td></tr>
+<tr><td>How available was each site (downtime)?</td><td><span class="ep"><b>POST</b> /statistics/nwa/details</span> with <code>type=site</code>, sum <code>down_time</code> by <code>site_id</code> (NWA = network availability)</td><td>—</td></tr>
+<tr><td>Composite site health, ready-made?</td><td><span class="ep"><b>GET</b> /statistics/sitehealth/common?last_n_hours=24&amp;includeDetails=true</span></td><td>—</td></tr>
+<tr><td>Circuit availability across the fabric?</td><td><span class="ep"><b>POST</b> /statistics/nwa/aggregation</span> with <code>type=link</code>, grouped by <code>system_ip, color</code></td><td>—</td></tr>
+<tr><td>Which applications are seen at a site?</td><td><span class="ep"><b>GET</b> /statistics/dpi/applications?query={url-encoded JSON}</span> with every site edge in one <code>vdevice_name</code> rule</td><td><span class="ep dev"><b>GET</b> /device/dpi/applications?deviceId=</span></td></tr>
+<tr><td>Which app families use the most bandwidth?</td><td><span class="ep"><b>POST</b> /statistics/dpi/aggregation</span> grouped by <code>family</code>, sum <code>octets</code></td><td>—</td></tr>
+<tr><td>Application health across sites?</td><td><span class="ep"><b>GET</b> /statistics/perfmon/applications/sites/health?last_n_hours=24&amp;includeUsage=true</span></td><td>—</td></tr>
+</table></div>
+
+<h3>Tunnel is not circuit</h3>
+<p>Customers use the words interchangeably; the API doesn't. A tunnel (path) is one local device + colour to one remote device + colour. A circuit (transport) is one local device + colour, carrying many tunnels. Group your aggregation accordingly, and never group by <code>local_color</code> alone across devices — it merges every "mpls" in the fabric into one row.</p>
+<div class="fig"><div class="scroll">
+<svg viewBox="0 0 900 230" xmlns="http://www.w3.org/2000/svg" font-size="12.5"><defs><marker id="ah-n2" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 z" class="f-ink-2"/></marker><marker id="ahB-n2" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 z" class="f-accent"/></marker></defs>
+  <rect x="40" y="70" width="170" height="90" rx="8" class="f-panel s-ink"/><text x="125" y="95" text-anchor="middle" font-weight="600" class="f-ink">BR-90 edge</text><text x="125" y="113" text-anchor="middle" class="m f-ink-2" font-size="11.5">system-ip 10.0.90.1</text>
+  <rect x="60" y="122" width="130" height="24" rx="4" class="f-accent-soft s-accent"/><text x="125" y="138" text-anchor="middle" class="f-ink" font-size="11.5">circuit: biz-internet</text>
+  <rect x="690" y="20" width="170" height="60" rx="8" class="f-panel s-ink"/><text x="775" y="45" text-anchor="middle" font-weight="600" class="f-ink">DC1-A</text><text x="775" y="63" text-anchor="middle" class="m f-ink-2" font-size="11.5">10.2.1.210 · mpls</text>
+  <rect x="690" y="95" width="170" height="60" rx="8" class="f-panel s-ink"/><text x="775" y="120" text-anchor="middle" font-weight="600" class="f-ink">DC1-B</text><text x="775" y="138" text-anchor="middle" class="m f-ink-2" font-size="11.5">10.2.1.211 · biz-internet</text>
+  <rect x="690" y="170" width="170" height="50" rx="8" class="f-panel s-ink"/><text x="775" y="192" text-anchor="middle" font-weight="600" class="f-ink">Hub-2</text><text x="775" y="208" text-anchor="middle" class="m f-ink-2" font-size="11.5">10.3.0.1 · public-internet</text>
+  <path d="M190,134 C400,134 500,50 688,50" class="f-none s-accent" stroke-width="1.6" marker-end="url(#ahB-n2)"/><text x="440" y="70" text-anchor="middle" class="f-ink-2" font-size="11.5">tunnel 1 · BFD session</text>
+  <path d="M190,134 C400,134 500,125 688,125" class="f-none s-accent" stroke-width="1.6" marker-end="url(#ahB-n2)"/><text x="440" y="118" text-anchor="middle" class="f-ink-2" font-size="11.5">tunnel 2 · BFD session</text>
+  <path d="M190,134 C400,134 500,195 688,195" class="f-none s-accent" stroke-width="1.6" marker-end="url(#ahB-n2)"/><text x="440" y="178" text-anchor="middle" class="f-ink-2" font-size="11.5">tunnel 3 · BFD session</text>
+  <text x="125" y="185" text-anchor="middle" class="f-accent" font-size="11.5" font-weight="600">1 circuit = vdevice_name + local_color</text>
+  <text x="440" y="215" text-anchor="middle" class="f-accent" font-size="11.5" font-weight="600">1 tunnel = local ip + local color + remote ip + remote color</text>
+</svg></div>
+<div class="cap">Figure 8a — One circuit carries many tunnels. Circuit availability = BFD sessions grouped by local colour; tunnel quality = app-route aggregation by the full four-field tuple.</div></div>
+
+<h3>The same device has four names</h3>
+<p>Inventory uses hyphenated fields, statistics use underscores, and real-time calls use <code>deviceId</code>. Mixing them up is the number one cause of "the API returns nothing" tickets.</p>
+<div class="tbl"><table>
+<tr><th>Inventory field (<code>GET /device</code>)</th><th>Used as</th><th>Where</th></tr>
+<tr><td><code>site-id</code></td><td><code>site-id</code> query parameter · <code>site_id</code> response field · <code>site</code> parameter on devicehealth</td><td>Inventory filter, statistics responses, health overview</td></tr>
+<tr><td><code>system-ip</code></td><td><code>deviceId</code></td><td>Every real-time call: <code>/device/…?deviceId=</code></td></tr>
+<tr><td><code>system-ip</code></td><td><code>vdevice_name</code></td><td>Every statistics query rule and response</td></tr>
+<tr><td><code>system-ip</code></td><td><code>system_ip</code> / <code>local_system_ip</code></td><td>Health overview, NWA, app-route aggregation</td></tr>
+<tr><td><code>reachability</code></td><td>Selection condition</td><td>Skip real-time calls to unreachable devices</td></tr>
+<tr><td><code>personality</code></td><td><code>vedge</code> vs controllers</td><td>Exclude controllers from edge-only queries</td></tr>
+</table></div>
+<div class="callout amber"><p><b>Never use a hostname, management IP, or chassis UUID</b> where an operation asks for the system IP. And never build on <code>/analytics/api/v4/dataservice/aggregate/*</code> — those paths are used by the Manager UI but are not in the OpenAPI spec and can change without notice; every result they give has a documented <code>/statistics</code> equivalent above.</p></div>
+</section>
+
+<!-- ============ STATE ============ -->
+<section id="state">
+<h2>Device state — bulk <span class="tag mgr">State cache</span></h2>
+<p>The "what is up or down right now" view. The Manager's collection manager polls devices on its own schedule and stores current state; you read the cache, and the router is never touched. One request returns the whole fabric in batches.</p>
+<div class="tbl"><table>
+<tr><th>Endpoint</th><th>Detail</th></tr>
+<tr><td><span class="ep"><b>GET</b> /data/device/state/{DataType}?count=N</span></td><td><code>count</code> mandatory (1–10,000); data types are case-sensitive</td></tr>
+<tr><td>Data types</td><td>BFDSessions · BGPNeighbor · Bridge · ControlConnection · ControlLocalProperty · ControlWanInterface · HardwareAlarms · HardwareEnvironment · HardwareInventory · Interface · OMPPeer · SystemStatus · System</td></tr>
+<tr><td>Paging</td><td>Response <code>pageInfo</code> carries <code>moreEntries</code> and <code>endId</code>; call again with <code>startId=endId</code></td></tr>
+<tr><td>Per-device cached view</td><td><span class="ep"><b>GET</b> /device/{feature}/synced?deviceId=</span> — same shape as real-time, served from the NMS (network management system) cache</td></tr>
+<tr><td>Sync control</td><td><span class="ep"><b>POST</b> /device/blockSync?blockSync=true|false</span> stops or resumes the collection manager — if state looks stale, check this first</td></tr>
+</table></div>
+<div class="fig"><div class="scroll">
+<svg viewBox="0 0 900 290" xmlns="http://www.w3.org/2000/svg" font-size="12.5"><defs>
+    <marker id="ah-8" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 z" class="f-ink-2"/></marker>
+    <marker id="ahA-8" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 z" class="f-amber"/></marker>
+    <marker id="ahB-8" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 z" class="f-accent"/></marker>
+  </defs>
+  <rect class="f-panel s-ink" x="60" y="20" width="140" height="34" rx="6"/><text class="f-ink" x="130" y="42" text-anchor="middle" font-weight="600">Client</text>
+  <rect class="f-accent-soft s-accent" x="330" y="20" width="150" height="34" rx="6"/><text class="f-ink" x="405" y="42" text-anchor="middle" font-weight="600">State cache</text>
+  <rect class="f-panel s-ink-3" x="540" y="20" width="150" height="34" rx="6"/><text class="f-ink" x="615" y="42" text-anchor="middle" font-weight="600">Collection manager</text>
+  <rect class="f-amber-soft s-amber" x="740" y="20" width="140" height="34" rx="6"/><text class="f-ink" x="810" y="42" text-anchor="middle" font-weight="600">All devices</text>
+  <line class="s-rule" x1="130" y1="54" x2="130" y2="280" stroke-dasharray="3 4"/><line class="s-rule" x1="405" y1="54" x2="405" y2="280" stroke-dasharray="3 4"/><line class="s-rule" x1="615" y1="54" x2="615" y2="280" stroke-dasharray="3 4"/><line class="s-rule" x1="810" y1="54" x2="810" y2="280" stroke-dasharray="3 4"/>
+  <rect class="s-ink-3 f-none" x="520" y="70" width="330" height="70" rx="6" stroke-dasharray="4 3"/><text class="f-ink-3" x="685" y="86" text-anchor="middle" font-size="11.5">background, independent of your calls</text>
+  <line class="s-amber" x1="615" y1="105" x2="808" y2="105" stroke-width="1.4" marker-end="url(#ahA-8)"/><text class="f-ink-2" x="712" y="99" text-anchor="middle" font-size="11.5">periodic sync</text>
+  <line class="s-ink-3" x1="810" y1="125" x2="617" y2="125" stroke-width="1.4" marker-end="url(#ah-8)"/><line class="s-ink-3" x1="615" y1="125" x2="407" y2="125" stroke-width="1.4" marker-end="url(#ah-8)"/><text class="f-ink-3" x="510" y="119" text-anchor="middle" font-size="11.5">write state rows</text>
+  <line class="s-accent" x1="130" y1="175" x2="403" y2="175" stroke-width="1.5" marker-end="url(#ahB-8)"/><text x="267" y="169" text-anchor="middle" class="m f-ink" font-size="12">GET /data/device/state/BFDSessions?count=1000</text>
+  <line class="s-ink-2" x1="405" y1="198" x2="132" y2="198" stroke-width="1.5" marker-end="url(#ah-8)"/><text x="267" y="192" text-anchor="middle" class="m f-ink" font-size="12">{data[1000], pageInfo:{moreEntries:true, endId}}</text>
+  <line class="s-accent" x1="130" y1="232" x2="403" y2="232" stroke-width="1.5" marker-end="url(#ahB-8)"/><text x="267" y="226" text-anchor="middle" class="m f-ink" font-size="12">…?count=1000&amp;startId=&lt;endId&gt;</text>
+  <line class="s-ink-2" x1="405" y1="255" x2="132" y2="255" stroke-width="1.5" marker-end="url(#ah-8)"/><text x="267" y="249" text-anchor="middle" class="m f-ink" font-size="12">{data[…], pageInfo:{moreEntries:false}}</text>
+  <text class="f-ink-3" x="712" y="230" text-anchor="middle" font-size="11.5">no device is contacted</text>
+</svg></div>
+<div class="cap">Figure 8 — Bulk state read. Your calls decouple from the device sync, which is why this path scales to thousands of routers.</div></div>
+<div class="codebox"><button data-copy>Copy</button><pre>def state(m, table, count=1000):
+    rows, start = [], None
+    while True:
+        q = f"count={count}" + (f"&amp;startId={start}" if start else "")
+        r = m.call("GET", f"/data/device/state/{table}?{q}")
+        rows += r["data"]; pi = r.get("pageInfo", {})
+        if not pi.get("moreEntries"): return rows
+        start = pi["endId"]
+
+bfd = state(m, "BFDSessions")
+down = [s for s in bfd if s.get("state") != "up"]</pre></div>
+<h3>Use case: a nightly fabric-wide export</h3>
+<p>A data-warehouse job copies every device's BFD (Bidirectional Forwarding Detection) sessions and the last day of tunnel statistics. Nothing here touches a router; the cost is all on the Manager, so the job must be polite.</p>
+<ul>
+<li><b>Use when</b> you need every row for many devices — warehouse loads, capacity reports, audits.</li>
+<li><b>Use when</b> the time window is bounded and the job can run off-peak.</li>
+<li><b>Do not use</b> to answer a question about one device — use a focused statistics query or real-time call.</li>
+<li><b>Do not use</b> more than two concurrent exports per Manager node, or hold the whole result in memory.</li>
+</ul>
+<div class="fig" id="fig8b"><div class="scroll">
+<svg viewBox="0 0 900 360" xmlns="http://www.w3.org/2000/svg" font-size="12.5"><defs>
+    <marker id="ah-15" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 z" class="f-ink-2"/></marker>
+    <marker id="ahA-15" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 z" class="f-amber"/></marker>
+    <marker id="ahB-15" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 z" class="f-accent"/></marker>
+  </defs>
+  <rect class="f-panel s-ink" x="40" y="20" width="160" height="34" rx="6"/><text class="f-ink" x="120" y="42" text-anchor="middle" font-weight="600">Exporter</text>
+  <rect class="f-panel s-ink" x="370" y="20" width="160" height="34" rx="6"/><text class="f-ink" x="450" y="36" text-anchor="middle" font-weight="600">server-proxy</text><text class="f-ink-3" x="450" y="50" text-anchor="middle" font-size="10.5">rate limit</text>
+  <rect class="f-accent-soft s-accent" x="690" y="20" width="190" height="34" rx="6"/><text class="f-ink" x="785" y="42" text-anchor="middle" font-weight="600">Statistics DB / State cache</text>
+  <line class="s-rule" x1="120" y1="54" x2="120" y2="350" stroke-dasharray="3 4"/><line class="s-rule" x1="450" y1="54" x2="450" y2="350" stroke-dasharray="3 4"/><line class="s-rule" x1="785" y1="54" x2="785" y2="350" stroke-dasharray="3 4"/>
+  <line class="s-accent" x1="120" y1="90" x2="783" y2="90" stroke-width="1.5" marker-end="url(#ahB-15)"/>
+  <text x="285" y="84" text-anchor="middle" class="m f-ink" font-size="11">GET /data/device/statistics/{table}/doccount</text>
+  <line class="s-accent" x1="120" y1="135" x2="783" y2="135" stroke-width="1.5" marker-end="url(#ahB-15)"/>
+  <text x="300" y="129" text-anchor="middle" class="m f-ink" font-size="11">GET /data/device/state/BFDSessions?count=1000&amp;startId=</text>
+  <text class="f-ink-3" x="620" y="152" text-anchor="middle" font-size="11">repeat with startId until moreEntries=false</text>
+  <line class="s-accent" x1="120" y1="185" x2="783" y2="185" stroke-width="1.5" marker-end="url(#ahB-15)"/>
+  <text x="330" y="179" text-anchor="middle" class="m f-ink" font-size="10.5">GET /data/device/statistics/approutestatsstatistics?startDate&amp;endDate&amp;count=10000</text>
+  <line class="s-accent" x1="120" y1="225" x2="783" y2="225" stroke-width="1.5" marker-end="url(#ahB-15)"/>
+  <text x="285" y="219" text-anchor="middle" class="m f-ink" font-size="11">…?scrollId=&lt;id&gt; until hasMoreData=false</text>
+  <path class="s-red f-none" d="M450,255 C420,255 300,255 300,270 C300,285 420,290 448,290" stroke-width="1.6" marker-end="url(#ah-15)"/>
+  <text class="f-red" x="290" y="300" text-anchor="end" font-size="11.5" font-weight="600">429 → back off 2 s → 60 s, no Retry-After</text>
+  <rect class="f-amber-soft s-amber" x="520" y="268" width="340" height="44" rx="5"/>
+  <text class="f-ink" x="690" y="288" text-anchor="middle" font-size="11.5">persist the cursor; stream rows;</text>
+  <text class="f-ink" x="690" y="304" text-anchor="middle" font-size="11.5">max 2 concurrent, 48/min per node</text>
+  <text class="f-ink-3" x="785" y="340" text-anchor="middle" font-size="11">no device is contacted</text>
+</svg></div>
+<div class="cap">Figure 8b — Bulk use case: estimate the volume, bound the window, page, respect concurrency, persist the cursor, and stream — never hold the export in memory.</div></div>
+
+</section>
+
+<!-- ============ STATS ============ -->
+<section id="stats">
+<h2>Statistics — export and query <span class="tag mgr">Statistics DB</span></h2>
+<p>Devices export counters to the Manager, which stores them in a time-series database. Two flavours share the same store: a bulk export for moving raw rows out, and a query/aggregation API that does the maths server-side and powers the Manager GUI charts.</p>
+<h3>Bulk export</h3>
+<div class="tbl"><table>
+<tr><th>Item</th><th>Detail</th></tr>
+<tr><td>Endpoint</td><td><span class="ep"><b>GET</b> /data/device/statistics/{datatype}?startDate=&amp;endDate=&amp;count=&amp;timeZone=</span> — start and end mandatory, <code>yyyy-MM-ddThh:mm:ss</code></td></tr>
+<tr><td>Data types</td><td>alarm · approutestatsstatistics (tunnel loss/latency/jitter) · auditlog · cflowdstatistics · cloudxstatistics · deviceconfiguration · deviceevent · devicesystemstatusstatistics (CPU/memory) · dpistatistics · flowlogstatistics · interfacestatistics · wlanclientinfostatistics</td></tr>
+<tr><td>Helpers</td><td><span class="ep">…/{datatype}/doccount</span>, <span class="ep">…/{datatype}/fields</span>; v2 interface stats at <span class="ep"><b>GET</b> /v2/data/device/statistics/interfacestatistics</span></td></tr>
+<tr><td>Paging</td><td><code>scrollId</code> in the response; pass it back until <code>hasMoreData</code> is false; expires after 10 minutes</td></tr>
+<tr><td>Limits</td><td>2 concurrent, 48/min per node</td></tr>
+</table></div>
+<div class="callout"><p><b>Collection interval is a Manager setting, not an API parameter.</b> It lives in Administration → Settings → Statistics Configuration: default 30 minutes, range 5–180. Set 30 minutes or higher when DPI (deep packet inspection) is enabled. App-route data points are 10-minute aggregates regardless of this setting. From Manager 20.9.6, the Manager collects statistics files at a higher frequency, independent of this setting.</p>
+<p>Polling faster than the export interval of the data type returns the same rows and burns rate-limit budget. Lowering the interval is a Manager capacity decision (disk ratio, database load), not an API decision.</p></div>
+<h3>Discover fields before you filter</h3>
+<p>Every statistics table exposes <span class="ep"><b>GET</b> /statistics/{table}/fields</span> (fields you can return) and <span class="ep"><b>GET</b> /statistics/{table}/query/fields</span> (fields you can filter on). Field names differ between releases; hard-coding them without checking is how integrations break silently on upgrade.</p>
+<div class="codebox"><button data-copy>Copy</button><pre>fields = {f["property"] for f in m.call("GET", "/statistics/approute/fields")}
+assert {"latency","jitter","loss_percentage","local_color"} &lt;= fields</pre></div>
+<h3>Query and aggregation</h3>
+<div class="tbl"><table>
+<tr><th>Item</th><th>Detail</th></tr>
+<tr><td>Endpoint family</td><td><span class="ep"><b>GET|POST</b> /statistics/{table}</span> plus <span class="ep">/aggregation</span>, <span class="ep">/csv</span>, <span class="ep">/doccount</span>, <span class="ep">/fields</span>, <span class="ep">/page</span>; 26.1 adds <code>page</code>, <code>pageSize</code>, <code>sortBy</code> parameters</td></tr>
+<tr><td>Tables</td><td>approute · interface · dpi · qos · flowlog · system (/cpu, /memory) · sitehealth · tunnelhealth · devicehealth · perfmon · fwall · urlf · ipsalert · umbrella · speedtest · qfp · qfpdrop · temperature · powerconsumption · endpointTracker · eiolte · wlanclientinfo · art · apphosting · sul · ppl/ctg and ppl/reordering (new in 26.1)</td></tr>
+<tr><td>Query body</td><td><code>query</code> (condition AND/OR + rules: field, type, value[], operator) · <code>sort</code> (field/order pairs) · <code>fields</code> · <code>aggregation</code> (histogram buckets + metrics)</td></tr>
+<tr><td>Deprecated in 26.1</td><td><span class="tag warn">/statistics/bfd</span> <span class="tag warn">/statistics/cflowd</span> <span class="tag warn">/statistics/device</span> <span class="tag warn">/statistics/system/stats</span></td></tr>
+</table></div>
+<div class="fig"><div class="scroll">
+<svg viewBox="0 0 900 300" xmlns="http://www.w3.org/2000/svg" font-size="12.5"><defs>
+    <marker id="ah-9" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 z" class="f-ink-2"/></marker>
+    <marker id="ahA-9" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 z" class="f-amber"/></marker>
+    <marker id="ahB-9" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 z" class="f-accent"/></marker>
+  </defs>
+  <rect class="f-panel s-ink" x="60" y="20" width="140" height="34" rx="6"/><text class="f-ink" x="130" y="42" text-anchor="middle" font-weight="600">Client</text>
+  <rect class="f-panel s-ink" x="330" y="20" width="150" height="34" rx="6"/><text class="f-ink" x="405" y="42" text-anchor="middle" font-weight="600">server-proxy</text>
+  <rect class="f-accent-soft s-accent" x="540" y="20" width="150" height="34" rx="6"/><text class="f-ink" x="615" y="42" text-anchor="middle" font-weight="600">Statistics DB</text>
+  <rect class="f-amber-soft s-amber" x="740" y="20" width="140" height="34" rx="6"/><text class="f-ink" x="810" y="42" text-anchor="middle" font-weight="600">Devices</text>
+  <line class="s-rule" x1="130" y1="54" x2="130" y2="290" stroke-dasharray="3 4"/><line class="s-rule" x1="405" y1="54" x2="405" y2="290" stroke-dasharray="3 4"/><line class="s-rule" x1="615" y1="54" x2="615" y2="290" stroke-dasharray="3 4"/><line class="s-rule" x1="810" y1="54" x2="810" y2="290" stroke-dasharray="3 4"/>
+  <line class="s-amber" x1="810" y1="80" x2="617" y2="80" stroke-width="1.4" stroke-dasharray="5 3" marker-end="url(#ahA-9)"/><text class="f-ink-2" x="712" y="74" text-anchor="middle" font-size="11.5">continuous telemetry export</text>
+  <line class="s-accent" x1="130" y1="115" x2="403" y2="115" stroke-width="1.5" marker-end="url(#ahB-9)"/><text x="267" y="109" text-anchor="middle" class="m f-ink" font-size="11.5">GET /data/device/statistics/approutestatsstatistics?…&amp;count=10000</text>
+  <rect class="f-amber-soft s-amber" x="355" y="128" width="100" height="22" rx="4"/><text class="f-ink" x="405" y="143" text-anchor="middle" font-size="11">rate-limit check</text>
+  <line class="s-ink-2" x1="405" y1="165" x2="613" y2="165" stroke-width="1.5" marker-end="url(#ah-9)"/><text class="f-ink-2" x="510" y="159" text-anchor="middle" font-size="11.5">time-range scan, open scroll</text>
+  <line class="s-ink-2" x1="615" y1="188" x2="407" y2="188" stroke-width="1.5" marker-end="url(#ah-9)"/>
+  <line class="s-ink-2" x1="405" y1="205" x2="132" y2="205" stroke-width="1.5" marker-end="url(#ah-9)"/><text x="267" y="199" text-anchor="middle" class="m f-ink" font-size="12">{data[10000], scrollId, hasMoreData:true}</text>
+  <line class="s-accent" x1="130" y1="238" x2="403" y2="238" stroke-width="1.5" marker-end="url(#ahB-9)"/><text x="267" y="232" text-anchor="middle" class="m f-ink" font-size="12">…?scrollId=&lt;id&gt;&amp;count=10000   (≤10 min)</text>
+  <line class="s-ink-2" x1="405" y1="262" x2="132" y2="262" stroke-width="1.5" marker-end="url(#ah-9)"/><text x="267" y="256" text-anchor="middle" class="m f-ink" font-size="12">{data[…], hasMoreData:false}</text>
+  <text class="f-ink-3" x="712" y="250" text-anchor="middle" font-size="11.5">no device is contacted</text>
+</svg></div>
+<div class="cap">Figure 9 — Bulk statistics export with scrollId paging. The proxy enforces 2 concurrent / 48 per minute before the query runs.</div></div>
+<div class="codebox"><button data-copy>Copy</button><pre><span class="c"># Bulk export of tunnel SLA rows for the last hour</span>
+from datetime import datetime, timedelta
+end = datetime.utcnow(); start = end - timedelta(hours=1)
+fmt = lambda t: t.strftime("%Y-%m-%dT%H:%M:%S")
+path = f"/data/device/statistics/approutestatsstatistics?startDate={fmt(start)}&amp;endDate={fmt(end)}&amp;count=10000&amp;timeZone=UTC"
+rows, r = [], m.call("GET", path)
+while True:
+    rows += r["data"]
+    if not r.get("hasMoreData"): break
+    r = m.call("GET", f"/data/device/statistics/approutestatsstatistics?scrollId={r['scrollId']}&amp;count=10000")
+
+<span class="c"># Server-side aggregation: hourly mean latency per tunnel, last 24 h</span>
+q = {"query": {"condition": "AND", "rules": [
+        {"field": "entry_time", "type": "date", "value": ["24"], "operator": "last_n_hours"},
+        {"field": "vdevice_name", "type": "string", "value": ["10.255.1.1"], "operator": "in"}]},
+     "aggregation": {"field": [{"property": "name", "sequence": 1}],
+                     "histogram": {"property": "entry_time", "type": "hour", "interval": 1, "order": "asc"},
+                     "metrics": [{"property": "latency", "type": "avg"}, {"property": "loss_percentage", "type": "avg"}]}}
+agg = m.call("POST", "/statistics/approute/aggregation", json=q)["data"]</pre></div>
+<h3>Use case: a daily tunnel-quality report</h3>
+<p>A scheduler builds one report a day on tunnel latency, jitter and loss, device health and site availability. The Manager does the maths server-side; no device is contacted.</p>
+<ul>
+<li><b>Use when</b> the question covers a time range — trends, SLA (service-level agreement) reports, health summaries.</li>
+<li><b>Use when</b> you can let the Manager aggregate instead of pulling raw rows.</li>
+<li><b>Do not use</b> faster than the collection interval of the data type — you get the same rows back.</li>
+<li><b>Do not use</b> for "right now" on one device — that is a real-time call.</li>
+</ul>
+<div class="fig" id="fig9b"><div class="scroll">
+<svg viewBox="0 0 900 330" xmlns="http://www.w3.org/2000/svg" font-size="12.5"><defs>
+    <marker id="ah-16" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 z" class="f-ink-2"/></marker>
+    <marker id="ahA-16" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 z" class="f-amber"/></marker>
+    <marker id="ahB-16" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 z" class="f-accent"/></marker>
+  </defs>
+  <rect class="f-panel s-ink" x="40" y="20" width="160" height="34" rx="6"/><text class="f-ink" x="120" y="42" text-anchor="middle" font-weight="600">Scheduler</text>
+  <rect class="f-accent-soft s-accent" x="640" y="20" width="220" height="34" rx="6"/><text class="f-ink" x="750" y="42" text-anchor="middle" font-weight="600">Manager (statistics DB)</text>
+  <line class="s-rule" x1="120" y1="54" x2="120" y2="320" stroke-dasharray="3 4"/><line class="s-rule" x1="750" y1="54" x2="750" y2="320" stroke-dasharray="3 4"/>
+  <line class="s-accent" x1="120" y1="90" x2="748" y2="90" stroke-width="1.5" marker-end="url(#ahB-16)"/>
+  <text x="435" y="84" text-anchor="middle" class="m f-ink" font-size="11.5">GET /statistics/approute/fields — discover fields first</text>
+  <line class="s-accent" x1="120" y1="145" x2="748" y2="145" stroke-width="1.5" marker-end="url(#ahB-16)"/>
+  <text x="435" y="139" text-anchor="middle" class="m f-ink" font-size="11.5">POST /statistics/approute/aggregation · last_n_hours=24</text>
+  <text class="f-ink-3" x="435" y="160" text-anchor="middle" font-size="10.5">group by local_system_ip, local_color, remote_system_ip, remote_color · avg latency/jitter/loss · vdevice_name rule</text>
+  <line class="s-accent" x1="120" y1="200" x2="748" y2="200" stroke-width="1.5" marker-end="url(#ahB-16)"/>
+  <text x="435" y="194" text-anchor="middle" class="m f-ink" font-size="11.5">GET /statistics/devicehealth/overview/cpu — good/fair/poor</text>
+  <line class="s-accent" x1="120" y1="250" x2="748" y2="250" stroke-width="1.5" marker-end="url(#ahB-16)"/>
+  <text x="435" y="244" text-anchor="middle" class="m f-ink" font-size="11.5">POST /statistics/nwa/details type=site — availability</text>
+  <rect class="f-green-soft s-green" x="40" y="275" width="160" height="34" rx="5"/><text class="f-ink" x="120" y="297" text-anchor="middle" font-size="11.5">results → daily report</text>
+  <text class="f-ink-3" x="750" y="300" text-anchor="middle" font-size="11">no device is contacted</text>
+</svg></div>
+<div class="cap">Figure 9b — Statistics use case: scheduled once per interval, aggregated server-side, no device contact. Group by the full tuple for tunnels, and by device + local colour for circuits.</div></div>
+
+</section>
+
+<!-- ============ ALARMS ============ -->
+<section id="alarms">
+<h2>Alarms, events, and webhooks <span class="tag mgr">Alarm store</span></h2>
+<p>Alarms are correlated conditions with severity; events are the raw notifications behind them. Retrieving alarms over REST means frequent polling, so the Manager can push them instead: a notification rule with a webhook URL delivers an HTTP POST the moment a matching alarm is raised.</p>
+<div class="tbl"><table>
+<tr><th>Endpoint</th><th>Function</th></tr>
+<tr><td><span class="ep"><b>GET|POST</b> /alarms</span></td><td>Active alarms; POST body filters by severity, time, site; 26.1 adds <code>site-id</code>, <code>page</code>, <code>pageSize</code>, <code>sortBy</code></td></tr>
+<tr><td><span class="ep">/alarms/aggregation</span>, <span class="ep">/alarms/severity/summary</span>, <span class="ep">/alarms/count</span>, <span class="ep">/alarms/topn</span></td><td>Counts by severity (MINOR, MAJOR, MEDIUM, CRITICAL) over time buckets</td></tr>
+<tr><td><span class="ep"><b>GET</b> /alarms/uuid/{alarm_uuid}</span>, <span class="ep">/alarms/notviewed</span>, <span class="ep"><b>POST</b> /alarms/markallasviewed?type=active|cleared</span></td><td>Single alarm and viewed state</td></tr>
+<tr><td><span class="ep"><b>POST</b> /alarms/disabled?eventName=&amp;time=</span></td><td>Suppress an alarm type for 0–72 h (maintenance windows)</td></tr>
+<tr><td><span class="ep"><b>GET|POST</b> /event</span>, <span class="ep">/event/aggregation</span>, <span class="ep">/event/severity</span></td><td>Raw events with the same filters</td></tr>
+<tr><td><span class="ep"><b>GET</b> /auditlog</span></td><td>Who changed what, when</td></tr>
+<tr><td><span class="ep"><b>POST</b> /notifications/rule</span>, <span class="ep"><b>GET</b> /notifications/rules</span>, <span class="ep"><b>PUT</b> /notifications/rule?ruleId=</span></td><td>Webhook / e-mail rules; role <code>Settings-write</code></td></tr>
+<tr><td><span class="ep"><b>GET</b> /data/device/statistics/alarm/active?startDate&amp;endDate</span></td><td>Bulk export of active alarms for a window</td></tr>
+</table></div>
+<div class="fig"><div class="scroll">
+<svg viewBox="0 0 900 290" xmlns="http://www.w3.org/2000/svg" font-size="12.5"><defs>
+    <marker id="ah-10" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 z" class="f-ink-2"/></marker>
+    <marker id="ahA-10" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 z" class="f-amber"/></marker>
+    <marker id="ahB-10" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 z" class="f-accent"/></marker>
+  </defs>
+  <rect class="f-panel s-ink" x="60" y="20" width="140" height="34" rx="6"/><text class="f-ink" x="130" y="42" text-anchor="middle" font-weight="600">Admin client</text>
+  <rect class="f-panel s-ink" x="330" y="20" width="150" height="34" rx="6"/><text class="f-ink" x="405" y="42" text-anchor="middle" font-weight="600">Alarm engine</text>
+  <rect class="f-amber-soft s-amber" x="540" y="20" width="150" height="34" rx="6"/><text class="f-ink" x="615" y="42" text-anchor="middle" font-weight="600">Device</text>
+  <rect class="f-green-soft s-green" x="740" y="20" width="140" height="34" rx="6"/><text class="f-ink" x="810" y="42" text-anchor="middle" font-weight="600">Your webhook</text>
+  <line class="s-rule" x1="130" y1="54" x2="130" y2="280" stroke-dasharray="3 4"/><line class="s-rule" x1="405" y1="54" x2="405" y2="280" stroke-dasharray="3 4"/><line class="s-rule" x1="615" y1="54" x2="615" y2="280" stroke-dasharray="3 4"/><line class="s-rule" x1="810" y1="54" x2="810" y2="280" stroke-dasharray="3 4"/>
+  <line class="s-green" x1="130" y1="85" x2="403" y2="85" stroke-width="1.5" marker-end="url(#ah-10)"/><text x="267" y="79" text-anchor="middle" class="m f-ink" font-size="12">POST /notifications/rule {severity[], webhookUrl}</text>
+  <line class="s-ink-2" x1="405" y1="108" x2="132" y2="108" stroke-width="1.5" marker-end="url(#ah-10)"/><text class="f-ink-2" x="267" y="102" text-anchor="middle">rule stored (one-time setup)</text>
+  <line class="s-amber" x1="615" y1="150" x2="407" y2="150" stroke-width="1.5" marker-end="url(#ahA-10)"/><text class="f-ink-2" x="510" y="144" text-anchor="middle" font-size="11.5">BFD down event via control plane</text>
+  <rect class="f-accent-soft s-accent" x="345" y="163" width="120" height="24" rx="4"/><text class="f-ink" x="405" y="179" text-anchor="middle" font-size="11">correlate → alarm</text>
+  <line class="s-green" x1="405" y1="210" x2="808" y2="210" stroke-width="1.5" marker-end="url(#ah-10)"/><text x="607" y="204" text-anchor="middle" class="m f-ink" font-size="12">POST https://your-host/hook {severity, message, devices[]}</text>
+  <line class="s-ink-3" x1="810" y1="233" x2="407" y2="233" stroke-width="1.3" marker-end="url(#ah-10)"/><text class="f-ink-3" x="607" y="227" text-anchor="middle">200 OK (fast; queue the work)</text>
+  <line class="s-accent" x1="130" y1="265" x2="403" y2="265" stroke-width="1.5" stroke-dasharray="5 3" marker-end="url(#ahB-10)"/><text x="267" y="259" text-anchor="middle" class="m f-ink-3" font-size="11.5">POST /alarms (backfill / reconcile hourly)</text>
+</svg></div>
+<div class="cap">Figure 10 — Push instead of poll. The webhook is the primary path; /alarms queries reconcile anything missed.</div></div>
+<div class="codebox"><button data-copy>Copy</button><pre>m.call("POST", "/notifications/rule", json={
+  "notificationRuleName": "noc-critical-major",
+  "severity": ["Critical", "Major"],
+  "alarmName": [],                      <span class="c"># empty = all alarm types</span>
+  "devicesAttached": [],                <span class="c"># empty = all devices; or [{"system-ip": "…"}]</span>
+  "webHookEnabled": True, "webhookUrl": "https://hooks.example.com/sdwan",
+  "webhookUsername": "svc", "webhookPassword": "…",
+  "emailEnabled": False})
+
+<span class="c"># Backfill: critical alarms in the last 24 h for one site</span>
+q = {"query": {"condition": "AND", "rules": [
+      {"field": "entry_time", "type": "date", "value": ["24"], "operator": "last_n_hours"},
+      {"field": "severity", "type": "string", "value": ["Critical"], "operator": "in"}]}, "size": 1000}
+alarms = m.call("POST", "/alarms?site-id=100", json=q)["data"]</pre></div>
+</section>
+
+<!-- ============ REALTIME ============ -->
+<section id="realtime">
+<h2>Real-time monitoring <span class="tag dev">Reaches the device</span></h2>
+<p>Real-time monitoring APIs query device state and information in real time. The Manager opens a NETCONF session to the router over its DTLS (Datagram Transport Layer Security) control connection, runs the query, and returns the result — one device per call. This is the only monitoring path that consumes CPU on the router, and it shares the control channel with configuration pushes and OMP (Overlay Management Protocol) updates.</p>
+<div class="callout amber"><p><b>The scale math:</b> 10 endpoints × 500 routers × once a minute = 5,000 NETCONF sessions per minute — a self-inflicted outage on the Manager.</p>
+<p><b>Deployment model matters.</b> On Cisco SD-WAN Cloud (the Cisco-operated SaaS fabric accessed through an API gateway with an API key, Release 20.15+), real-time and bulk APIs are not exposed. On on-prem or Cisco-hosted control components, where you call your own Manager directly, they are available with the standard limits.</p></div>
+
+<div class="fig"><div class="scroll">
+<svg viewBox="0 0 900 300" xmlns="http://www.w3.org/2000/svg" font-size="12.5"><defs>
+    <marker id="ah-11" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 z" class="f-ink-2"/></marker>
+    <marker id="ahA-11" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 z" class="f-amber"/></marker>
+    <marker id="ahB-11" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 z" class="f-accent"/></marker>
+  </defs>
+  <rect class="f-panel s-ink" x="60" y="20" width="140" height="34" rx="6"/><text class="f-ink" x="130" y="42" text-anchor="middle" font-weight="600">Engineer</text>
+  <rect class="f-panel s-ink" x="330" y="20" width="150" height="34" rx="6"/><text class="f-ink" x="405" y="42" text-anchor="middle" font-weight="600">Manager</text>
+  <rect class="f-panel s-ink-3" x="540" y="20" width="150" height="34" rx="6"/><text class="f-ink" x="615" y="42" text-anchor="middle" font-weight="600">DTLS tunnel</text>
+  <rect class="f-amber-soft s-amber" x="740" y="20" width="140" height="34" rx="6"/><text class="f-ink" x="810" y="42" text-anchor="middle" font-weight="600">Edge router</text>
+  <line class="s-rule" x1="130" y1="54" x2="130" y2="290" stroke-dasharray="3 4"/><line class="s-rule" x1="405" y1="54" x2="405" y2="290" stroke-dasharray="3 4"/><line class="s-rule" x1="615" y1="54" x2="615" y2="290" stroke-dasharray="3 4"/><line class="s-rule" x1="810" y1="54" x2="810" y2="290" stroke-dasharray="3 4"/>
+  <line class="s-amber" x1="130" y1="90" x2="403" y2="90" stroke-width="1.5" marker-end="url(#ahA-11)"/><text x="267" y="84" text-anchor="middle" class="m f-ink" font-size="12">GET /device/app-route/statistics?deviceId=…</text>
+  <rect class="f-rule-2 s-rule" x="345" y="103" width="120" height="24" rx="4"/><text class="f-ink" x="405" y="119" text-anchor="middle" font-size="11">RBAC + no cache</text>
+  <line class="s-amber" x1="405" y1="150" x2="808" y2="150" stroke-width="1.8" marker-end="url(#ahA-11)"/><text x="607" y="144" text-anchor="middle" class="m f-ink" font-size="12">NETCONF &lt;get&gt; over DTLS</text>
+  <rect class="f-amber-soft s-amber" x="750" y="163" width="120" height="40" rx="4"/><text class="f-ink" x="810" y="179" text-anchor="middle" font-size="11">router CPU spends</text><text class="f-ink" x="810" y="194" text-anchor="middle" font-size="11">cycles on the query</text>
+  <line class="s-amber" x1="810" y1="225" x2="407" y2="225" stroke-width="1.8" marker-end="url(#ahA-11)"/><text class="f-ink-2" x="607" y="219" text-anchor="middle">XML reply, parsed to JSON</text>
+  <line class="s-ink-2" x1="405" y1="258" x2="132" y2="258" stroke-width="1.5" marker-end="url(#ah-11)"/><text x="267" y="252" text-anchor="middle" class="m f-ink" font-size="12">200 {data:[per-tunnel loss/latency/jitter]}</text>
+  <text class="f-amber" x="607" y="280" text-anchor="middle" font-size="11.5" font-weight="600">shares the channel with config pushes and OMP</text>
+</svg></div>
+<div class="cap">Figure 11 — A real-time call is a live round trip to the router. Contrast with figures 8 and 9, where no device is contacted.</div></div>
+
+<h3>Use case: an engineer troubleshoots one site</h3>
+<p>A NOC (network operations centre) engineer is told site 90 is slow. They ask the Manager which devices are at the site, then pull live state from the one reachable edge router that matters.</p>
+<ul>
+<li><b>Use when</b> a person is investigating one device, right now.</li>
+<li><b>Use when</b> the cached or statistics data is too old to answer the question.</li>
+<li><b>Do not use</b> on a schedule, in a loop, or across the fabric.</li>
+<li><b>Do not use</b> against unreachable devices — the call waits and times out.</li>
+</ul>
+<div class="fig" id="fig11b"><div class="scroll">
+<svg viewBox="0 0 900 300" xmlns="http://www.w3.org/2000/svg" font-size="12.5"><defs>
+    <marker id="ah-17" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 z" class="f-ink-2"/></marker>
+    <marker id="ahA-17" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 z" class="f-amber"/></marker>
+    <marker id="ahB-17" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 z" class="f-accent"/></marker>
+  </defs>
+  <rect class="f-panel s-ink" x="40" y="20" width="160" height="34" rx="6"/><text class="f-ink" x="120" y="42" text-anchor="middle" font-weight="600">Engineer</text>
+  <rect class="f-accent-soft s-accent" x="370" y="20" width="160" height="34" rx="6"/><text class="f-ink" x="450" y="42" text-anchor="middle" font-weight="600">Manager</text>
+  <rect class="f-amber-soft s-amber" x="700" y="20" width="160" height="34" rx="6"/><text class="f-ink" x="780" y="42" text-anchor="middle" font-weight="600">Edge router</text>
+  <line class="s-rule" x1="120" y1="54" x2="120" y2="290" stroke-dasharray="3 4"/><line class="s-rule" x1="450" y1="54" x2="450" y2="290" stroke-dasharray="3 4"/><line class="s-rule" x1="780" y1="54" x2="780" y2="290" stroke-dasharray="3 4"/>
+  <line class="s-accent" x1="120" y1="90" x2="448" y2="90" stroke-width="1.5" marker-end="url(#ahB-17)"/>
+  <text x="285" y="84" text-anchor="middle" class="m f-ink" font-size="11.5">GET /device?site-id=90</text>
+  <path class="s-amber f-none" d="M120,135 L778,135" stroke-width="1.6" stroke-dasharray="6 4" marker-end="url(#ahA-17)"/>
+  <text x="450" y="129" text-anchor="middle" class="m f-amber" font-size="11.5">GET /device/bfd/sessions?deviceId=&lt;reachable edge&gt;</text>
+  <path class="s-amber f-none" d="M120,180 L778,180" stroke-width="1.6" stroke-dasharray="6 4" marker-end="url(#ahA-17)"/>
+  <text x="450" y="174" text-anchor="middle" class="m f-amber" font-size="11.5">GET /device/app-route/statistics?deviceId=</text>
+  <rect class="f-panel s-ink-3" x="40" y="210" width="320" height="44" rx="5"/>
+  <text class="f-ink" x="200" y="230" text-anchor="middle" font-size="11.5">group BFD sessions by local colour</text>
+  <text class="f-ink-2" x="200" y="246" text-anchor="middle" font-size="11">to read circuit state · done, no loop</text>
+  <text class="f-amber" x="615" y="240" text-anchor="middle" font-size="11.5" font-weight="600">spends router CPU</text>
+</svg></div>
+<div class="cap">Figure 11b — Real-time use case: one device, on demand, never scheduled. Skip unreachable devices. This is the only API category that spends router CPU.</div></div>
+
+<h3>The synced twins</h3>
+<p>Many real-time endpoints have a <code>synced</code> variant that returns the same shape from the Manager NMS cache: <code>/device/system/status</code> vs <code>/device/system/synced/status</code>, <code>/device/bfd/sessions</code> vs <code>/device/bfd/synced/sessions</code>, <code>/device/control/connections</code> vs <code>/device/control/synced/connections</code>, <code>/hardware/alarms</code> vs <code>/hardware/synced/alarms</code>. If you need one device's view without touching it, use the synced twin.</p>
+
+<h3>Endpoint catalog (26.1)</h3>
+<p>All are <span class="ep dev"><b>GET</b> /dataservice/…?deviceId=&lt;system-ip&gt;</span>. Cisco annotates most as "on vEdge routers only"; the same paths generally work on Catalyst IOS XE edges, but test each one — bridge, PPP, and dot1x are Viptela-OS specific.</p>
+<details open><summary>Application-aware routing, app logs, ARP</summary><div class="body"><ul>
+<li><code>device/app-route/sla-class</code> — SLA classes operating on the router</li>
+<li><code>device/app-route/statistics</code> — traffic characteristics per operational data-plane tunnel</li>
+<li><code>device/app/log/flow-count</code>, <code>device/app/log/flows</code> — logged packet flows</li>
+<li><code>device/arp</code> — IPv4 ARP table; <code>device/ndv6</code> — IPv6 neighbors</li>
+</ul></div></details>
+<details><summary>BFD, BGP, OSPF, IP forwarding</summary><div class="body"><ul>
+<li><code>device/bfd/history</code>, <code>device/bfd/sessions</code>, <code>device/bfd/synced/sessions</code>, <code>device/bfd/summary</code>, <code>device/bfd/tloc</code></li>
+<li><code>device/bgp/neighbors</code>, <code>device/bgp/routes</code>, <code>device/bgp/summary</code></li>
+<li><code>device/ospf/database</code>, <code>/databasesummary</code>, <code>/databaseexternal</code>, <code>/interface</code>, <code>/neighbor</code>, <code>/process</code>, <code>/routes</code></li>
+<li><code>device/ip/fib</code> (26.1 also <code>v4fib</code>, <code>v6fib</code>), <code>device/ip/routetable</code>, <code>device/ip/mfiboil</code>, <code>/mfibstats</code>, <code>/mfibsummary</code></li>
+<li><code>device/ip/nat/filter</code>, <code>/nat/interface</code>, <code>/nat/interfacestatistics</code></li>
+</ul></div></details>
+<details><summary>Control plane, OMP, orchestrator (Validator)</summary><div class="body"><ul>
+<li><code>device/control/connections</code>, <code>/synced/connections</code>, <code>/synced/connectionshistory</code>, <code>/localproperties</code>, <code>/synced/localproperties</code>, <code>/statistics</code>, <code>/summary</code>, <code>/waninterface</code>, <code>/synced/waninterface</code>, <code>/affinity/config</code>, <code>/affinity/status</code>, <code>/validdevices</code>, <code>/validvsmarts</code></li>
+<li><code>device/omp/peers</code>, <code>/synced/peers</code>, <code>/routes/advertised</code>, <code>/routes/received</code>, <code>/tlocs/advertised</code>, <code>/tlocs/received</code>, <code>/services</code>, <code>/summary</code>, <code>/mcastautodiscoveradvt</code>, <code>/mcastautodiscoverrecv</code>, <code>/mcastroutesadvt</code>, <code>/mcastroutesrecv</code></li>
+<li><code>device/orchestrator/connections</code>, <code>/connectionshistory</code>, <code>/localproperties</code>, <code>/summary</code>, <code>/validvedges</code>, <code>/validsmarts</code></li>
+<li><code>tunnel/transport/connection</code> — DTLS connection status to the Validator</li>
+</ul></div></details>
+<details><summary>Interfaces, tunnels, IPsec, QoS and policy</summary><div class="body"><ul>
+<li><code>device/interface</code>, <code>device/interface/synced</code>, <code>/arp_stats</code>, <code>/error_stats</code>, <code>/pkt_size</code>, <code>/port_stats</code>, <code>/queue_stats</code>, <code>/stats</code></li>
+<li><code>device/tunnel/statistics</code>, <code>device/tunnel/gre-keepalives</code></li>
+<li><code>device/ipsec/inbound</code>, <code>/localsa</code>, <code>/outbound</code>; <code>device/security/information</code></li>
+<li><code>device/policer</code>; <code>device/policy/accesslistassociations</code>, <code>/accesslistcounters</code>, <code>/accesslistnames</code>, <code>/accesslistpolicers</code>, <code>/approutepolicyfilter</code>, <code>/datapolicyfilter</code>, <code>/qosmapinfo</code>, <code>/qosschedulerinfo</code>, <code>/rewriteassociations</code></li>
+<li><code>device/qfp/cpustat</code>, <code>device/qfp/memstat</code> — QFP (quantum flow processor) data-plane load on IOS XE</li>
+</ul></div></details>
+<details><summary>Flow visibility: DPI, cflowd, CloudExpress</summary><div class="body"><ul>
+<li><code>device/dpi/applications</code>, <code>/flows</code>, <code>/summary</code>, <code>/supported-applications</code> (DPI = deep packet inspection)</li>
+<li><code>device/cflowd/collector</code>, <code>/flows</code>, <code>/flows-count</code>, <code>/statistics</code>, <code>/template</code>; IOS XE: <code>device/cedgecflowd/app-fwd-cflowd-flows</code>, <code>/app-fwd-cflowd-v6-flows</code></li>
+<li><code>device/cloudx/applications</code> — best interface per CloudExpress application</li>
+</ul></div></details>
+<details><summary>System, hardware, software, users</summary><div class="body"><ul>
+<li><code>device/system/status</code>, <code>device/system/synced/status</code>; 26.1: <code>device/system/info</code>, <code>device/featuresupport</code></li>
+<li><code>hardware/alarms</code>, <code>hardware/synced/alarms</code>, <code>hardware/environment</code>, <code>hardware/synced/environment</code>, <code>hardware/synced/inventory</code>, <code>hardware/threshold</code></li>
+<li><code>device/software</code>, <code>device/software/synced</code>; <code>device/reboothistory</code>, <code>device/reboothistory/synced</code>; <code>device/crashlog</code>, <code>device/crashlog/synced</code></li>
+<li><code>device/users</code>, <code>device/vpn</code>, <code>device/vrrp</code>, <code>device/ntp/associations</code>, <code>device/ntp/peer</code></li>
+</ul></div></details>
+<details><summary>Access: cellular, WLAN, DHCP, dot1x, PPP, bridge, multicast</summary><div class="body"><ul>
+<li><code>device/cellular/modem</code>, <code>/network</code>, <code>/profiles</code>, <code>/radio</code>, <code>/sessions</code>, <code>/status</code>, <code>/connection</code>; 26.1: <code>/ursp/routes</code>, <code>/ursp/rules</code></li>
+<li><code>device/wlan/clients</code>, <code>/interfaces</code>, <code>/radios</code>; 26.1: <code>device/wireless/status</code></li>
+<li><code>device/dhcp/interface</code>, <code>device/dhcpv6/interface</code>, <code>device/dhcp/server</code></li>
+<li><code>device/dot1x/clients</code>, <code>device/dot1x/interfaces</code>; <code>device/ppp/interface</code>; <code>device/pppoe/session</code>, <code>/statistics</code></li>
+<li><code>device/bridge/interface</code>, <code>/mac</code>, <code>/table</code></li>
+<li><code>device/igmp/groups</code>, <code>/interface</code>, <code>/statistics</code>, <code>/summary</code>; <code>device/pim/interface</code>, <code>pim/neighbor</code>, <code>device/pim/rp-mapping</code>, <code>pim/statistics</code>; <code>device/multicast/replicator</code>, <code>/rpf</code>, <code>/topology</code>, <code>/tunnel</code></li>
+<li>26.1: <code>device/dns/defense/info</code>, <code>device/dns/defense/device-registration</code>; endpoint tracker family under the Real-Time Monitoring - Endpoint Tracker Service tag</li>
+</ul></div></details>
+
+<h3>Sanctioned implementation: an on-demand runbook</h3>
+<div class="codebox"><button data-copy>Copy</button><pre><span class="c"># Triggered by an engineer for ONE device. Never scheduled.</span>
+def site_snapshot(m, system_ip):
+    q = f"?deviceId={system_ip}"
+    return {
+      "control": m.call("GET", "/device/control/connections" + q)["data"],
+      "bfd":     m.call("GET", "/device/bfd/sessions" + q)["data"],
+      "sla":     m.call("GET", "/device/app-route/statistics" + q)["data"],
+      "ifaces":  m.call("GET", "/device/interface/error_stats" + q)["data"],
+      "cpu":     m.call("GET", "/device/system/status" + q)["data"],
+    }</pre></div>
+</section>
+
+<!-- ============ TOOLS ============ -->
+<section id="tools">
+<h2>Troubleshooting tools <span class="tag dev">Reaches the device</span></h2>
+<p>Diagnostic operations that go beyond a single query: log bundles, path traces, utilities. Tagged in the spec as Troubleshooting Tools - Device Connectivity and Troubleshooting Tools - Network Wide Path Insight.</p>
+<div class="tbl"><table>
+<tr><th>Endpoint</th><th>Function</th></tr>
+<tr><td><span class="ep dev"><b>POST</b> /device/tools/admintech</span></td><td>Generate an admin-tech bundle; 26.1 body accepts <code>deviceIP</code>, <code>device-type</code>, <code>exclude-cores</code>, <code>exclude-tech</code>, <code>exclude-logs</code> and a <code>custom-commands</code> array such as <code>show version</code>, <code>show platform</code></td></tr>
+<tr><td><span class="ep"><b>GET</b> /device/tools/admintechs</span>, <span class="ep">/device/tools/admintech/download/{filename}</span></td><td>List and download bundles</td></tr>
+<tr><td><span class="ep dev"><b>GET</b> /troubleshooting/control/{uuid}</span></td><td>Troubleshoot control connections</td></tr>
+<tr><td><span class="ep dev"><b>GET</b> /troubleshooting/devicebringup?uuid=</span></td><td>Onboarding diagnostics</td></tr>
+<tr><td><span class="ep dev"><b>POST</b> /device/tools/reset/interface/{deviceIP}</span></td><td>Reset an interface</td></tr>
+<tr><td><span class="ep dev"><b>POST</b> /device/tools/ping/{deviceIP}</span>, <span class="ep">/traceroute/{deviceIP}</span>, <span class="ep">/nslookup/{deviceIP}</span></td><td>Connectivity utilities executed on the device</td></tr>
+<tr><td><span class="ep dev">/stream/device/nwpi/*</span></td><td>Network-Wide Path Insight: <code>trace/start</code>, <code>trace/stop/{traceId}</code>, <code>traceHistory</code>, <code>exportTrace</code>, <code>importTrace</code>, <code>tasks/*</code></td></tr>
+<tr><td><span class="ep dev">/stream/device/umts/*</span></td><td>Underlay Measurement and Tracing Service sessions</td></tr>
+<tr><td><span class="ep dev">/stream/device/log/*</span></td><td>Live log streaming sessions (create, search, renew, download)</td></tr>
+<tr><td><span class="ep dev">/stream/device/speed</span></td><td>Speed test session; returns <code>sessionId</code>, <code>startTime</code>, <code>renewalTime</code></td></tr>
+</table></div>
+<div class="fig"><div class="scroll">
+<svg viewBox="0 0 900 260" xmlns="http://www.w3.org/2000/svg" font-size="12.5"><defs>
+    <marker id="ah-12" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 z" class="f-ink-2"/></marker>
+    <marker id="ahA-12" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 z" class="f-amber"/></marker>
+    <marker id="ahB-12" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 z" class="f-accent"/></marker>
+  </defs>
+  <rect class="f-panel s-ink" x="60" y="20" width="140" height="34" rx="6"/><text class="f-ink" x="130" y="42" text-anchor="middle" font-weight="600">Engineer</text>
+  <rect class="f-panel s-ink" x="380" y="20" width="160" height="34" rx="6"/><text class="f-ink" x="460" y="42" text-anchor="middle" font-weight="600">Manager</text>
+  <rect class="f-amber-soft s-amber" x="700" y="20" width="140" height="34" rx="6"/><text class="f-ink" x="770" y="42" text-anchor="middle" font-weight="600">Device</text>
+  <line class="s-rule" x1="130" y1="54" x2="130" y2="250" stroke-dasharray="3 4"/><line class="s-rule" x1="460" y1="54" x2="460" y2="250" stroke-dasharray="3 4"/><line class="s-rule" x1="770" y1="54" x2="770" y2="250" stroke-dasharray="3 4"/>
+  <line class="s-amber" x1="130" y1="85" x2="458" y2="85" stroke-width="1.5" marker-end="url(#ahA-12)"/><text x="295" y="79" text-anchor="middle" class="m f-ink" font-size="12">POST /device/tools/admintech {deviceIP, commands[]}</text>
+  <line class="s-ink-2" x1="460" y1="108" x2="132" y2="108" stroke-width="1.5" marker-end="url(#ah-12)"/><text x="295" y="102" text-anchor="middle" class="m f-ink" font-size="12">{fileName, taskId}</text>
+  <line class="s-amber" x1="460" y1="130" x2="768" y2="130" stroke-width="1.6" marker-end="url(#ahA-12)"/><text class="f-ink-2" x="615" y="124" text-anchor="middle">request admin-tech (minutes of device CPU)</text>
+  <line class="s-ink-3" x1="770" y1="160" x2="462" y2="160" stroke-width="1.4" marker-end="url(#ah-12)"/><text class="f-ink-3" x="615" y="154" text-anchor="middle">tar.gz uploaded to Manager</text>
+  <line class="s-accent" x1="130" y1="192" x2="458" y2="192" stroke-width="1.5" marker-end="url(#ahB-12)"/><text x="295" y="186" text-anchor="middle" class="m f-ink" font-size="12">GET /device/tools/admintechs (poll)</text>
+  <line class="s-accent" x1="130" y1="228" x2="458" y2="228" stroke-width="1.5" marker-end="url(#ahB-12)"/><text x="295" y="222" text-anchor="middle" class="m f-ink" font-size="12">GET /device/tools/admintech/download/{fileName}</text>
+</svg></div>
+<div class="cap">Figure 12 — Admin-tech generation is the heaviest device-side operation in the API; run it one device at a time.</div></div>
+</section>
+
+<!-- ============ ERRORS ============ -->
+<section id="errors">
+<h2>Errors and resilience</h2>
+<h3>HTTP status codes</h3>
+<div class="tbl"><table>
+<tr><th>Code</th><th>Message</th><th>Meaning</th><th>Client action</th></tr>
+<tr><td>200</td><td>OK</td><td>Success</td><td>—</td></tr>
+<tr><td>201</td><td>Created</td><td>New resource created</td><td>—</td></tr>
+<tr><td>400</td><td>Bad request</td><td>Request was invalid</td><td>Fix the body; do not retry as-is</td></tr>
+<tr><td>401</td><td>Unauthorized</td><td>Authentication missing or incorrect</td><td>Re-authenticate, retry once</td></tr>
+<tr><td>403</td><td>Forbidden</td><td>Understood but not allowed</td><td>Check XSRF header and <code>x-roles-required</code></td></tr>
+<tr><td>404</td><td>Not found</td><td>Resource not found</td><td>Check path / release (deprecated in 26.1?)</td></tr>
+<tr><td>429</td><td>Too many requests</td><td>Rate limit exceeded</td><td>Exponential backoff; no <code>Retry-After</code> is sent</td></tr>
+<tr><td>500</td><td>Internal server error</td><td>Problem with the server</td><td>Retry with backoff; capture body for TAC</td></tr>
+<tr><td>503</td><td>Service unavailable</td><td>Server unable to complete request</td><td>Back off; check Manager cluster health</td></tr>
+</table></div>
+<div class="callout red"><p><b>Two things the spec does not give you.</b> Login and logout signal success or failure in the response body, not the status code — a failed session login is a 200 with an HTML page. And the OpenAPI document declares 400, 403 and 500 on nearly every operation with no body schema, while 401, 429 and 503 are documented only in prose and carry no rate-limit headers. Your client needs its own backoff and its own error parsing.</p></div>
+
+<h3>When the API returns 200 and nothing</h3>
+<p>An empty <code>data</code> array with HTTP 200 is not an error to the Manager. Work it top-down:</p>
+<div class="fig"><div class="scroll">
+<svg viewBox="0 0 900 330" xmlns="http://www.w3.org/2000/svg" font-size="12"><defs><marker id="ah-n3" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 z" class="f-ink-2"/></marker><marker id="ahB-n3" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 z" class="f-accent"/></marker></defs>
+  <rect x="20" y="130" width="130" height="50" rx="8" class="f-panel s-ink"/><text x="85" y="152" text-anchor="middle" font-weight="600" class="f-ink">200, data: []</text><text x="85" y="168" text-anchor="middle" class="f-ink-2" font-size="11">statistics query</text>
+  <rect x="200" y="130" width="150" height="50" rx="8" class="f-accent-soft s-accent"/><text x="275" y="152" text-anchor="middle" font-weight="600" class="f-ink">1 Widen window</text><text x="275" y="168" text-anchor="middle" class="f-ink-2" font-size="11">168 h, no device rule</text>
+  <rect x="400" y="40" width="150" height="50" rx="8" class="f-green-soft s-green"/><text x="475" y="62" text-anchor="middle" font-weight="600" class="f-ink">Data appears</text><text x="475" y="78" text-anchor="middle" class="f-ink-2" font-size="11">device value mismatch</text>
+  <rect x="600" y="40" width="200" height="50" rx="8" class="f-panel s-ink-3"/><text x="700" y="62" text-anchor="middle" font-weight="600" class="f-ink">Copy exact vdevice_name</text><text x="700" y="78" text-anchor="middle" class="f-ink-2" font-size="11">from a raw row</text>
+  <rect x="400" y="130" width="150" height="50" rx="8" class="f-accent-soft s-accent"/><text x="475" y="152" text-anchor="middle" font-weight="600" class="f-ink">2 Inspect raw rows</text><text x="475" y="168" text-anchor="middle" class="f-ink-2" font-size="11">POST /statistics/{table}</text>
+  <rect x="600" y="130" width="200" height="50" rx="8" class="f-panel s-ink-3"/><text x="700" y="152" text-anchor="middle" font-weight="600" class="f-ink">Still empty → not a query bug</text><text x="700" y="168" text-anchor="middle" class="f-ink-2" font-size="11">collection off · no traffic · retention</text>
+  <rect x="400" y="220" width="150" height="50" rx="8" class="f-red-soft s-red"/><text x="475" y="242" text-anchor="middle" font-weight="600" class="f-ink">403 instead?</text><text x="475" y="258" text-anchor="middle" class="f-ink-2" font-size="11">needs Monitoring-read roles</text>
+  <rect x="600" y="220" width="200" height="50" rx="8" class="f-panel s-ink-3"/><text x="700" y="242" text-anchor="middle" font-weight="600" class="f-ink">Compare with Manager UI</text><text x="700" y="258" text-anchor="middle" class="f-ink-2" font-size="11">UI empty too → data issue</text>
+  <line x1="150" y1="155" x2="198" y2="155" class="s-ink-2" stroke-width="1.5" marker-end="url(#ah-n3)"/>
+  <path d="M350,148 C375,148 380,65 398,65" class="f-none s-green" stroke-width="1.5" marker-end="url(#ah-n3)"/>
+  <line x1="350" y1="155" x2="398" y2="155" class="s-ink-2" stroke-width="1.5" marker-end="url(#ah-n3)"/>
+  <path d="M350,162 C375,162 380,245 398,245" class="f-none s-red" stroke-width="1.5" marker-end="url(#ah-n3)"/>
+  <line x1="550" y1="65" x2="598" y2="65" class="s-ink-2" stroke-width="1.5" marker-end="url(#ah-n3)"/>
+  <line x1="550" y1="155" x2="598" y2="155" class="s-ink-2" stroke-width="1.5" marker-end="url(#ah-n3)"/>
+  <line x1="550" y1="245" x2="598" y2="245" class="s-ink-2" stroke-width="1.5" marker-end="url(#ah-n3)"/>
+  <text x="450" y="310" text-anchor="middle" class="f-ink-3" font-size="11.5">If the UI has data and the API does not: capture release, device model, HTTP status, body and the exact URL sent — that is a TAC case.</text>
+</svg></div>
+<div class="cap">Figure 14 — Empty-response decision tree. Separate a value mismatch from a genuine absence of data before touching the query logic.</div></div>
+<h3>Failure patterns and fixes</h3>
+<div class="tbl"><table>
+<tr><th>Symptom</th><th>Likely cause</th><th>Fix</th></tr>
+<tr><td>200 with HTML body on login</td><td>Bad credentials or locked account</td><td>Check for <code>&lt;html&gt;</code>; never parse as JSON</td></tr>
+<tr><td>403 on POST that works as GET</td><td>Missing <code>X-XSRF-TOKEN</code></td><td>Send it on every non-GET</td></tr>
+<tr><td>403 with valid token</td><td>Role lacks the feature (e.g. <code>Settings-write</code> for webhook rules)</td><td>Read the operation's <code>x-roles-required</code>; adjust the usergroup</td></tr>
+<tr><td>429</td><td>Exceeded 48/min bulk, 2 concurrent bulk, or 100/s general</td><td>Serialize bulk calls; backoff 2 s → 60 s</td></tr>
+<tr><td>Empty <code>data</code> from state tables</td><td>Sync blocked or statistics collection disabled</td><td>Check <code>/device/blockSync</code> and statistics settings</td></tr>
+<tr><td><code>scrollId</code> returns nothing</td><td>Expired after 10 minutes</td><td>Restart the time window</td></tr>
+<tr><td>Task never completes</td><td>Device unreachable or variable error</td><td>Read <code>activity[]</code> in the task status</td></tr>
+<tr><td>Real-time call times out</td><td>Device busy or control connection flapping</td><td>Use the <code>synced</code> twin; check <code>/device/control/synced/connections</code></td></tr>
+</table></div>
+<div class="fig"><div class="scroll">
+<svg viewBox="0 0 900 230" xmlns="http://www.w3.org/2000/svg" font-size="12.5"><defs>
+    <marker id="ah-13" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 z" class="f-ink-2"/></marker>
+    <marker id="ahA-13" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 z" class="f-amber"/></marker>
+    <marker id="ahB-13" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 z" class="f-accent"/></marker>
+  </defs>
+  <g class="f-ink" font-weight="600">
+    <rect class="f-panel s-ink" x="20" y="85" width="120" height="50" rx="8"/><text x="80" y="115" text-anchor="middle">Send request</text>
+    <rect class="f-panel s-ink-3" x="200" y="85" width="120" height="50" rx="25"/><text x="260" y="115" text-anchor="middle">status?</text>
+    <rect class="f-green-soft s-green" x="390" y="20" width="150" height="46" rx="8"/><text x="465" y="42" text-anchor="middle">2xx → parse body</text><text class="f-ink-2" x="465" y="58" text-anchor="middle" font-weight="400" font-size="11.5">check for &lt;html&gt; on login</text>
+    <rect class="f-accent-soft s-accent" x="390" y="85" width="150" height="46" rx="8"/><text x="465" y="107" text-anchor="middle">401 → re-login</text><text class="f-ink-2" x="465" y="123" text-anchor="middle" font-weight="400" font-size="11.5">retry once, then fail</text>
+    <rect class="f-amber-soft s-amber" x="390" y="150" width="150" height="46" rx="8"/><text x="465" y="172" text-anchor="middle">429 / 503 → wait</text><text class="f-ink-2" x="465" y="188" text-anchor="middle" font-weight="400" font-size="11.5">2 s · 4 s · 8 s … 60 s, max 6 tries</text>
+    <rect class="f-red-soft s-red" x="620" y="85" width="150" height="46" rx="8"/><text x="695" y="107" text-anchor="middle">400 / 403 / 404</text><text class="f-ink-2" x="695" y="123" text-anchor="middle" font-weight="400" font-size="11.5">do not retry; log + alert</text>
+  </g>
+  <g class="s-ink-2 f-none" stroke-width="1.5">
+    <line x1="140" y1="110" x2="198" y2="110" marker-end="url(#ah-13)"/>
+    <path d="M320,100 C350,100 360,43 388,43" marker-end="url(#ah-13)"/>
+    <line x1="320" y1="108" x2="388" y2="108" marker-end="url(#ah-13)"/>
+    <path d="M320,120 C350,120 360,173 388,173" marker-end="url(#ah-13)"/>
+    <path d="M540,108 L618,108" marker-end="url(#ah-13)"/>
+  </g>
+  <path class="s-amber f-none" d="M465,196 L465,215 L80,215 L80,137" stroke-width="1.3" stroke-dasharray="5 3" marker-end="url(#ahA-13)"/>
+  <path class="s-accent f-none" d="M465,131 L465,140 L340,140 L340,60 L80,60 L80,83" stroke-width="1.3" stroke-dasharray="5 3" marker-end="url(#ahB-13)"/>
+</svg></div>
+<div class="cap">Figure 13 — Client retry policy. Only 401, 429, 500 and 503 are retried; 4xx client errors are surfaced immediately.</div></div>
+</section>
+
+<!-- ============ CHANGES ============ -->
+<section id="changes">
+<h2>What changed from 20.18 to 26.1</h2>
+<p>The Monitoring and Troubleshooting changelog ends with an explicit statement that result-API changes broke backward compatibility. Integrations built against 20.x should be reviewed before an upgrade.</p>
+<div class="grid2">
+<div><h3>Deprecated</h3><ul class="tight">
+<li><code>/statistics/bfd</code> and all sub-paths</li>
+<li><code>/statistics/cflowd</code> and all sub-paths</li>
+<li><code>/statistics/device</code> and all sub-paths</li>
+<li><code>/statistics/system/stats</code> and all sub-paths</li>
+<li><code>/accesstoken/…</code>, <code>/refreshtoken/…</code>, <code>/token/…</code>, <code>/device_authorization/…</code> cloud token helpers</li>
+<li><code>/dca/*</code> data-collection endpoints (SD-WAN Services)</li>
+</ul>
+<h3>Deleted</h3><ul class="tight">
+<li><code>/statistics/cflowd/applications</code>, <code>…/applications/summary</code>, <code>…/device/applications</code></li>
+<li><code>POST /device/tier/{tierName}</code> → replaced by <code>POST /device/tier</code></li>
+</ul></div>
+<div><h3>New</h3><ul class="tight">
+<li><code>/advisories/insecure-config/summary</code>, <code>/devices</code>, <code>/devices/{deviceIP}</code>; <code>/device/insecure-config</code></li>
+<li><code>/statistics/ppl/ctg</code>, <code>/statistics/ppl/reordering</code> (full query family)</li>
+<li><code>/device/featuresupport</code>, <code>/device/wireless/status</code>, <code>/device/cellular/ursp/routes|rules</code>, <code>/device/dns/defense/*</code>, <code>/device/system/info</code>, <code>/device/ip/v4fib|v6fib</code></li>
+<li><code>/statistics/download/{processType}/file/{token}/{fileName}</code></li>
+</ul>
+<h3>Changed</h3><ul class="tight">
+<li><code>site-id</code> filter across <code>/alarms*</code>, <code>/event*</code>, <code>/notifications/rules</code>, <code>/device</code></li>
+<li><code>page</code>, <code>pageSize</code>, <code>sortBy</code> across most <code>/statistics/{table}</code></li>
+<li><code>/health/devices</code> and <code>/health/devices/overview</code> response reshaped</li>
+<li><code>GET /alarms/master</code> operation renamed getMasterManagerState → getLeaderManagerState</li>
+<li><code>POST /device/tools/admintech</code> gained <code>custom-commands</code></li>
+<li>JWT authentication introduced in 20.18.1; session auth kept</li>
+</ul></div>
+</div>
+<div class="tbl"><table>
+<tr><th>Need</th><th>Use in 26.1</th><th>Replace</th></tr>
+<tr><td>Tunnel SLA / app-route trending</td><td><code>POST /statistics/approute</code>; bulk <code>approutestatsstatistics</code></td><td><code>/statistics/bfd</code></td></tr>
+<tr><td>Flow / application visibility</td><td><code>/statistics/dpi</code>, <code>/statistics/flowlog</code></td><td><code>/statistics/cflowd/*</code></td></tr>
+<tr><td>Device CPU / memory</td><td><code>/statistics/system</code> (<code>/cpu</code>, <code>/memory</code>); bulk <code>devicesystemstatusstatistics</code></td><td><code>/statistics/system/stats</code>, <code>/statistics/device</code></td></tr>
+</table></div>
+</section>
+
+<!-- ============ GUIDANCE ============ -->
+<section id="guidance">
+<h2>Guidance checklist</h2>
+<ol class="steps">
+<li><b>Never schedule real-time calls.</b> Per-device NETCONF pulls over the control plane belong in an on-demand runbook, scoped to one device or site.</li>
+<li><b>Poll bulk state for "now."</b> One call per table returns the whole fabric. Five-minute cadence covers NOC dashboards; use <code>/health/devices/overview</code> for the headline.</li>
+<li><b>Export statistics in windows.</b> Bulk <code>/data/device/statistics/{table}</code> with scrollId paging, two concurrent, 48/min per node; use <code>/statistics/{table}/aggregation</code> when the Manager can do the maths.</li>
+<li><b>Push alarms, don't pull them.</b> Register <code>/notifications/rule</code> webhooks; use <code>/alarms</code> only for backfill.</li>
+<li><b>Build a resilient client.</b> Short-lived JWT with refresh; XSRF on every non-GET; backoff on 429 (no Retry-After); re-auth once on 401; inspect the login body.</li>
+<li><b>Ramp load gradually and watch the Manager.</b> Start with a low request count and interval, increase one dimension at a time, and watch every Manager node for CPU and memory, API latency and timeouts, 429 and 5xx rates, statistics-query and bulk-export duration, and device reachability. Stop when any of them moves. The rate limit is a ceiling, not a target.</li>
+<li><b>Match poll cadence to export cadence.</b> Poll device state every 5 minutes, statistics once per collection interval of that data type, and alarms never (webhooks). Faster is not fresher.</li>
+<li><b>Least privilege.</b> A read-only monitoring usergroup for collectors; <code>Settings-write</code> only for the account that manages webhook rules.</li>
+<li><b>Target 26.1 endpoint names now.</b> Anything calling <code>/statistics/bfd</code>, <code>/statistics/cflowd</code>, <code>/statistics/device</code> or <code>/statistics/system/stats</code> will break on upgrade.</li>
+<li><b>Know which deployment model you have.</b> On-prem and Cisco-hosted control components expose the full API against your own Manager. Cisco SD-WAN Cloud (the SaaS fabric reached through an API gateway) does not expose real-time or bulk APIs and limits the rest to 5–10 requests/second.</li>
+<li><b>Know when REST is the wrong tool.</b> Sub-minute telemetry at scale is a job for SD-WAN telemetry data collection or the ThousandEyes Enterprise Agent, not a polling loop.</li>
+<li><b>Start from the companion kit.</b> A Postman/Bruno collection (40 requests across auth, inventory, bulk state, statistics, alarms, real-time, tasks) and a Python <code>manager_client.py</code> with all three auth modes, retry policy and paging helpers ship alongside this guide as <code><a href="sdwan-api-field-guide-companion.zip" download>sdwan-api-field-guide-companion.zip</a></code>.</li>
+<li><b>Don't reinvent the client.</b> The <code>catalystwan</code> Python SDK, <code>terraform-provider-sdwan</code>, the Pulumi provider, the DevNet SD-WAN Reporting Tool and the two DevNet MCP (Model Context Protocol) servers already wrap these endpoints; Sastre handles configuration backup and restore.</li>
+</ol>
+<p class="foot">Built from the Cisco DevNet Catalyst SD-WAN Manager API guides (Releases 20.18 and 26.1), the Cisco Catalyst SD-WAN Getting Started Guide, and the Cisco Control Components and Device Management Guide 26.x. Endpoint names reflect Release 26.1; verify against your Manager's <code>/apidocs</code> before production use.</p>
+</section>
+</main>
+</div>
+<button class="toggle" id="themeBtn" type="button" aria-label="Toggle light or dark theme">Theme</button>
+<script>
+(function(){
+  var root=document.documentElement, btn=document.getElementById('themeBtn');
+  try{var t=localStorage.getItem('sdwan-guide-theme'); if(t) root.setAttribute('data-theme',t);}catch(e){}
+  btn.addEventListener('click',function(){
+    var cur=root.getAttribute('data-theme');
+    var next = cur==='dark' ? 'light' : (cur==='light' ? '' : (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'light':'dark'));
+    if(next) root.setAttribute('data-theme',next); else root.removeAttribute('data-theme');
+    try{ if(next) localStorage.setItem('sdwan-guide-theme',next); else localStorage.removeItem('sdwan-guide-theme'); }catch(e){}
+  });
+  document.querySelectorAll('[data-copy]').forEach(function(b){
+    b.addEventListener('click',function(){
+      var pre=b.parentElement.querySelector('pre'); var txt=pre.innerText;
+      var done=function(){b.textContent='Copied'; setTimeout(function(){b.textContent='Copy';},1400);};
+      if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(txt).then(done,done);}
+      else{var ta=document.createElement('textarea');ta.value=txt;document.body.appendChild(ta);ta.select();try{document.execCommand('copy');}catch(e){}document.body.removeChild(ta);done();}
+    });
+  });
+  var links=[].slice.call(document.querySelectorAll('#toc a')); var secs=links.map(function(a){return document.querySelector(a.getAttribute('href'));});
+  if('IntersectionObserver' in window){
+    var io=new IntersectionObserver(function(entries){
+      entries.forEach(function(en){ if(en.isIntersecting){ links.forEach(function(a){a.classList.toggle('active', a.getAttribute('href')==='#'+en.target.id);}); }});
+    },{rootMargin:'-10% 0px -80% 0px'});
+    secs.forEach(function(s){ if(s) io.observe(s); });
+  }
+})();
+</script>
+
+<script>
+(function(){
+  var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var figs = document.querySelectorAll('.fig');
+  figs.forEach(function(fig, fi){
+    var svg = fig.querySelector('svg'); if(!svg) return;
+    var arrows = [].slice.call(svg.querySelectorAll('line[marker-end],path[marker-end]'));
+    if(!arrows.length) return;
+    var STEP = 0.9, DUR = 0.75, T = arrows.length*STEP + 0.8;
+    arrows.forEach(function(a, i){
+      var d;
+      if(a.tagName === 'line'){
+        d = 'M'+a.getAttribute('x1')+','+a.getAttribute('y1')+' L'+a.getAttribute('x2')+','+a.getAttribute('y2');
+      } else { d = a.getAttribute('d'); }
+      var cls = a.getAttribute('class') || '';
+      var col = /s-amber/.test(cls) ? 'c-amber' : /s-accent/.test(cls) ? 'c-accent' : /s-green/.test(cls) ? 'c-green' : 'c-ink';
+      var t0 = (i*STEP)/T, t1 = (i*STEP+DUR)/T;
+      var kt = [0, t0, t1, 1].map(function(v){return v.toFixed(4)}).join(';');
+      var ns='http://www.w3.org/2000/svg';
+      var c = document.createElementNS(ns,'circle');
+      c.setAttribute('r','4.5'); c.setAttribute('class','pkt '+col); c.setAttribute('opacity','0');
+      var am = document.createElementNS(ns,'animateMotion');
+      am.setAttribute('path', d); am.setAttribute('dur', T+'s'); am.setAttribute('repeatCount','indefinite');
+      am.setAttribute('calcMode','linear'); am.setAttribute('keyPoints','0;0;1;1'); am.setAttribute('keyTimes', kt);
+      var ao = document.createElementNS(ns,'animate');
+      ao.setAttribute('attributeName','opacity'); ao.setAttribute('dur', T+'s'); ao.setAttribute('repeatCount','indefinite');
+      ao.setAttribute('calcMode','discrete'); ao.setAttribute('values','0;1;0;0'); ao.setAttribute('keyTimes', kt);
+      c.appendChild(am); c.appendChild(ao); svg.appendChild(c);
+      // label pulse: the text element right after the arrow
+      var lbl = a.nextElementSibling;
+      if(lbl && lbl.tagName === 'text'){
+        var al = document.createElementNS(ns,'animate');
+        al.setAttribute('attributeName','opacity'); al.setAttribute('dur', T+'s'); al.setAttribute('repeatCount','indefinite');
+        al.setAttribute('calcMode','discrete'); al.setAttribute('values','0.45;1;0.45;0.45'); al.setAttribute('keyTimes', kt);
+        lbl.appendChild(al);
+        var aw = document.createElementNS(ns,'animate');
+        aw.setAttribute('attributeName','font-weight'); aw.setAttribute('dur', T+'s'); aw.setAttribute('repeatCount','indefinite');
+        aw.setAttribute('calcMode','discrete'); aw.setAttribute('values','normal;600;normal;normal'); aw.setAttribute('keyTimes', kt);
+        lbl.appendChild(aw);
+      }
+      // arrow pulse
+      var as = document.createElementNS(ns,'animate');
+      as.setAttribute('attributeName','stroke-width'); as.setAttribute('dur', T+'s'); as.setAttribute('repeatCount','indefinite');
+      as.setAttribute('calcMode','discrete'); as.setAttribute('values','1.5;2.4;1.5;1.5'); as.setAttribute('keyTimes', kt);
+      a.appendChild(as);
+    });
+    // controls
+    var bar = document.createElement('div'); bar.className='bar';
+    var play = document.createElement('button'); play.type='button';
+    var replay = document.createElement('button'); replay.type='button'; replay.textContent='Replay';
+    var info = document.createElement('span'); info.textContent = arrows.length + ' steps · ' + Math.round(T) + ' s loop';
+    bar.appendChild(play); bar.appendChild(replay); bar.appendChild(info);
+    fig.insertBefore(bar, fig.firstChild);
+    var running = !reduce;
+    function setState(){ if(running){svg.unpauseAnimations(); play.textContent='Pause';} else {svg.pauseAnimations(); play.textContent='Play';} }
+    play.addEventListener('click', function(){ running=!running; setState(); });
+    replay.addEventListener('click', function(){ svg.setCurrentTime(0); running=true; setState(); });
+    setState();
+    // pause off-screen figures to save CPU
+    if('IntersectionObserver' in window){
+      new IntersectionObserver(function(en){ en.forEach(function(e){ if(!running) return; if(e.isIntersecting) svg.unpauseAnimations(); else svg.pauseAnimations(); }); },{threshold:.1}).observe(fig);
+    }
+  });
+})();
+</script>
+</body>
+</html>
