@@ -7,28 +7,29 @@
 <link rel="canonical" href="https://alexpacket.github.io/sdwan-manager-api-guide/">
 <link rel="icon" type="image/svg+xml" href="favicon.svg">
 <link rel="icon" type="image/png" sizes="32x32" href="favicon.png">
+<meta name="theme-color" content="#000000">
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
 :root{
-  --bg:#F7F9FB; --panel:#FFFFFF; --ink:#12263A; --ink-2:#44576A; --ink-3:#7C8B99;
-  --rule:#D5DEE7; --rule-2:#E6ECF2; --accent:#0A7BB8; --accent-soft:#E3F1FA;
-  --amber:#B7791F; --amber-soft:#FBF1DC; --green:#2C7A5B; --green-soft:#E1F1EA;
-  --red:#B54141; --red-soft:#F8E4E4; --code-bg:#0F1E2E; --code-ink:#DCE6F0;
-  --sans:'IBM Plex Sans',system-ui,-apple-system,Segoe UI,Roboto,sans-serif;
-  --mono:'IBM Plex Mono',ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+  --bg:#FFFFFF; --panel:#FFFFFF; --surface:#F2F5F7; --ink:#07182D; --ink-2:#536070; --ink-3:#7A8796;
+  --rule:#E1E6EB; --rule-2:#F2F5F7; --accent:#0A60FF; --accent-soft:#E8F0FF; --cyan:#00BCEB;
+  --amber:#B86E00; --amber-soft:#FFF2DC; --green:#1F8A4C; --green-soft:#E3F3EA;
+  --red:#CC2D37; --red-soft:#FCE8E9; --code-bg:#07182D; --code-ink:#DCE6F0;
+  --sans:'Inter','Noto Sans',system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;
+  --mono:'JetBrains Mono',ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
   box-sizing:border-box; padding-top:env(safe-area-inset-top,0px); padding-bottom:env(safe-area-inset-bottom,0px);
 }
 @media (prefers-color-scheme: dark){ :root:not([data-theme="light"]){
-  --bg:#0E1720; --panel:#152130; --ink:#E6EDF3; --ink-2:#B4C1CE; --ink-3:#7E8D9C;
-  --rule:#2B3947; --rule-2:#1F2B38; --accent:#4FB3E8; --accent-soft:#12324A;
-  --amber:#E0A93F; --amber-soft:#3A2D12; --green:#5FC493; --green-soft:#12342A;
-  --red:#E07A7A; --red-soft:#3D1C1C; --code-bg:#0A131C; --code-ink:#D5E0EA; }}
+  --bg:#05101C; --panel:#0B1622; --surface:#0F1C2A; --ink:#FFFFFF; --ink-2:#C9D1DA; --ink-3:#8C99A8;
+  --rule:#1E2B3A; --rule-2:#0F1C2A; --accent:#4D8DFF; --accent-soft:#0E2247; --cyan:#33CCF0;
+  --amber:#F0AA3C; --amber-soft:#33240A; --green:#4CC38A; --green-soft:#0F2E21;
+  --red:#F07A80; --red-soft:#3A1418; --code-bg:#000000; --code-ink:#D5E0EA; color-scheme:dark }}
 :root[data-theme="dark"]{
-  --bg:#0E1720; --panel:#152130; --ink:#E6EDF3; --ink-2:#B4C1CE; --ink-3:#7E8D9C;
-  --rule:#2B3947; --rule-2:#1F2B38; --accent:#4FB3E8; --accent-soft:#12324A;
-  --amber:#E0A93F; --amber-soft:#3A2D12; --green:#5FC493; --green-soft:#12342A;
-  --red:#E07A7A; --red-soft:#3D1C1C; --code-bg:#0A131C; --code-ink:#D5E0EA; }
+  --bg:#05101C; --panel:#0B1622; --surface:#0F1C2A; --ink:#FFFFFF; --ink-2:#C9D1DA; --ink-3:#8C99A8;
+  --rule:#1E2B3A; --rule-2:#0F1C2A; --accent:#4D8DFF; --accent-soft:#0E2247; --cyan:#33CCF0;
+  --amber:#F0AA3C; --amber-soft:#33240A; --green:#4CC38A; --green-soft:#0F2E21;
+  --red:#F07A80; --red-soft:#3A1418; --code-bg:#000000; --code-ink:#D5E0EA; color-scheme:dark }
 html{scroll-padding-top:calc(env(safe-area-inset-top,0px) + 16px); scroll-behavior:smooth}
 @media (prefers-reduced-motion: reduce){ html{scroll-behavior:auto} *{transition:none!important} }
 *,*::before,*::after{box-sizing:inherit}
@@ -142,9 +143,83 @@ svg text{font-family:var(--sans)} svg text.m{font-family:var(--mono)}
 svg .pkt{stroke:var(--panel);stroke-width:1.5}
 svg .pkt.c-accent{fill:var(--accent)} svg .pkt.c-amber{fill:var(--amber)} svg .pkt.c-green{fill:var(--green)} svg .pkt.c-ink{fill:var(--ink-2)}
 svg .lbl-dim{opacity:.45}
+
+/* ===== SE-brand layer: white sticky header, black hero, Inter, pill controls ===== */
+:root{--hdr:64px}
+html{scroll-padding-top:calc(env(safe-area-inset-top,0px) + var(--hdr) + 16px)}
+section{scroll-margin-top:0}
+body{line-height:1.5}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:30;background:var(--panel)}
+.cse-wrap{max-width:1320px;margin:0 auto;padding-left:max(24px,env(safe-area-inset-left,0px));padding-right:max(24px,env(safe-area-inset-right,0px))}
+header.cse{position:sticky;top:env(safe-area-inset-top,0px);z-index:20;background:var(--panel);border-bottom:1px solid var(--rule)}
+header.cse .cse-wrap{display:flex;align-items:center;gap:28px;height:var(--hdr)}
+.cse-brand{display:flex;flex-direction:column;line-height:1.15;text-decoration:none;color:var(--ink);flex:none}
+.cse-brand b{font-weight:700;font-size:17px;letter-spacing:-.01em}
+.cse-brand b span{color:var(--cyan)}
+.cse-brand small{font-size:11.5px;color:var(--ink-2)}
+header.cse nav{display:flex;gap:22px;min-width:0}
+header.cse nav a{color:var(--ink);text-decoration:none;font-size:14px;white-space:nowrap;padding:6px 0;border-bottom:2px solid transparent}
+header.cse nav a:hover,header.cse nav a[aria-current="page"]{border-bottom-color:var(--accent)}
+header.cse .toggle{position:static;margin-left:auto;font:600 14px var(--sans);padding:8px 20px;border-radius:48px;border:1px solid var(--accent);color:var(--accent);background:transparent;z-index:auto}
+header.cse .toggle:hover{background:var(--accent-soft)}
+@media (max-width:760px){header.cse nav{display:none}}
+.cse-strip{background:#000;color:#fff;font-size:13.5px;text-align:center;padding:10px 16px}
+.cse-strip b{font-weight:600}
+.cse-hero{background:#000;color:#fff;padding-block:52px 48px}
+.cse-hero .eyebrow{display:block;font-size:13px;font-weight:600;color:#33CCF0;letter-spacing:.02em;margin:0 0 12px}
+.cse-hero h1{font-size:clamp(32px,4.2vw,48px);line-height:1.17;font-weight:500;letter-spacing:-.015em;margin:0 0 16px;max-width:22ch;color:#fff}
+.cse-hero .lead{font-size:18px;line-height:1.55;color:#B9C1C9;max-width:66ch;margin:0 0 14px}
+.cse-hero .meta{font-size:13px;color:#8C99A8;max-width:80ch;margin:0}
+footer.cse{background:#000;color:#B9C1C9;font-size:13px;padding-block:28px}
+footer.cse p{margin:0;max-width:none;color:#B9C1C9}
+footer.cse a{color:#fff}
+
+.layout{max-width:1320px;margin:0 auto}
+nav.side{top:calc(env(safe-area-inset-top,0px) + var(--hdr));height:calc(100vh - var(--hdr));height:calc(100dvh - var(--hdr));border-right:1px solid var(--rule);padding-top:28px}
+nav.side .brand,nav.side .sub{display:none}
+nav.side li a{border-radius:8px;padding:7px 10px;font-size:14px}
+nav.side li a.active{background:var(--accent-soft);color:var(--accent);font-weight:600}
+nav.side li.group{font-size:12px;font-weight:600;color:var(--ink);border-bottom:0;padding:0 10px 4px;margin-top:18px}
+nav.side li.group:first-child{margin-top:0}
+main{padding-top:24px}
+main > section:first-child > h2:first-child{margin-top:16px}
+h2{font-size:clamp(26px,2.6vw,32px);font-weight:500;letter-spacing:-.01em;border-top:1px solid var(--rule);padding-top:40px;margin-top:56px}
+h3{font-weight:600}
+.lead{color:var(--ink-2)}
+.kpi div{border:0;background:var(--surface);border-radius:8px;padding:16px 18px}
+.kpi b{font-size:28px;font-weight:500;letter-spacing:-.01em}
+.kpi span{color:var(--ink-2);font-size:13px}
+.card,.fig,details,.figindex,.pathmap div{border-radius:8px}
+.callout{background:var(--surface);border-radius:0 8px 8px 0}
+.callout.amber,.callout.warn{background:var(--surface)}
+.callout.red,.callout.crit{background:var(--surface)}
+.callout.green,.callout.ok{background:var(--surface)}
+.tag{border-radius:48px;font-weight:600}
+th{color:var(--ink);border-bottom:1px solid var(--ink)}
+code{background:var(--surface);overflow-wrap:anywhere}
+.grid2>*,.pathmap>*,.kpi>*{min-width:0}
+pre{border-radius:8px}
+.fig .bar{background:var(--surface);border-bottom-color:var(--rule);padding:8px 10px}
+.fig .bar button{border-radius:48px;padding:4px 14px;font-weight:500;color:var(--ink);background:var(--panel)}
+.fig .bar button[aria-current="step"],.fig .bar button[aria-pressed="true"]{background:var(--ink);border-color:var(--ink);color:var(--panel)}
+.fig .bar .dots button{padding:4px 0;min-width:30px}
+.codebox button{border-radius:48px;padding:3px 10px}
+.pathmap button{border-radius:8px}
+.foot{display:none}
+button:focus-visible,a:focus-visible,summary:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+@media (max-width:960px){
+  .layout{max-width:none;grid-template-columns:minmax(0,1fr)}
+  nav.side ol{flex-wrap:wrap}
+  nav.side{position:static;height:auto;top:auto;padding-top:14px}
+  nav.side li a{padding:5px 10px}
+  main{padding-top:16px}
+}
 </style>
 </head>
 <body>
+<header class="cse"><div class="cse-wrap"><a class="cse-brand" href="/"><b>Cisco<span>SE</span></b><small>Field reference</small></a><nav aria-label="CiscoSE guides"><a href="https://sdwan-api.ciscose.com/" aria-current="page">SD-WAN Manager API</a><a href="https://svl.ciscose.com/">StackWise Virtual lab</a></nav><button class="toggle" id="themeBtn" type="button" aria-label="Toggle light or dark theme">Light / dark</button></div></header>
+<div class="cse-strip"><b>CiscoSE</b> · Field guide · Release 26.1 with 20.18 deltas</div>
+<div class="cse-hero"><div class="cse-wrap"><span class="eyebrow">Cisco Catalyst SD-WAN</span><h1>Cisco Catalyst SD-WAN Manager API</h1><p class="lead">A working reference for every API area: what each endpoint family does, how the Manager serves the call, how to implement it, and where the data actually comes from.</p><p class="meta">Sources: DevNet API guide Release 26.1 (spec 26.1.0, 2026-01-06) and Release 20.18; Cisco Catalyst SD-WAN Getting Started Guide (updated July 2026); Cisco Control Components guide 26.x. Acronyms are spelled out on first use.</p></div></div>
 <div class="layout">
 <nav class="side" aria-label="Sections">
   <p class="brand">Catalyst SD-WAN Manager API</p>
@@ -182,9 +257,7 @@ svg .lbl-dim{opacity:.45}
 
 <main>
 <section id="overview">
-<h1>Cisco Catalyst SD-WAN Manager API</h1>
-<p class="lead">A working reference for every API area: what each endpoint family does, how the Manager serves the call, how to implement it, and where the data actually comes from.</p>
-<p class="meta">Sources: DevNet API guide Release 26.1 (spec 26.1.0, 2026-01-06) and Release 20.18; Cisco Catalyst SD-WAN Getting Started Guide (updated July 2026); Cisco Control Components guide 26.x. Acronyms are spelled out on first use.</p>
+
 
 <p>The Manager API is a REST (Representational State Transfer) interface for controlling, configuring, and monitoring devices in an overlay. Cisco frames four use cases: provisioning, network visibility, third-party tool integration, and Network as Code. Every path is prefixed with <code>/dataservice</code>, payloads are JSON except a few file uploads, and the calling role needs API access permission.</p>
 
@@ -707,14 +780,14 @@ wait_task(m, task["parentTaskId"])</pre></div>
 </svg>
 </div>
 <div class="cap" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:4px 18px;line-height:1.5">
-  <span><i style="display:inline-block;width:10px;height:10px;border-radius:50%;background:#2C7A5B;margin-right:6px;vertical-align:-1px"></i>Interface stats every 5 min</span>
-  <span><i style="display:inline-block;width:10px;height:10px;border-radius:50%;background:#1F5C45;margin-right:6px;vertical-align:-1px"></i>App-route every 10 min</span>
-  <span><i style="display:inline-block;width:10px;height:10px;border-radius:50%;background:#143D2E;margin-right:6px;vertical-align:-1px"></i>Collection interval every 30 min</span>
+  <span><i style="display:inline-block;width:10px;height:10px;border-radius:50%;background:#1F8A4C;margin-right:6px;vertical-align:-1px"></i>Interface stats every 5 min</span>
+  <span><i style="display:inline-block;width:10px;height:10px;border-radius:50%;background:#176B3A;margin-right:6px;vertical-align:-1px"></i>App-route every 10 min</span>
+  <span><i style="display:inline-block;width:10px;height:10px;border-radius:50%;background:#0F4A28;margin-right:6px;vertical-align:-1px"></i>Collection interval every 30 min</span>
   <span><i style="display:inline-block;width:10px;height:10px;border-radius:50%;background:#5FC493;margin-right:6px;vertical-align:-1px"></i>State sync about every 1 min</span>
-  <span><i style="display:inline-block;width:10px;height:10px;border-radius:50%;background:#0A7BB8;margin-right:6px;vertical-align:-1px"></i>Collector: bulk state every 5 min</span>
-  <span><i style="display:inline-block;width:10px;height:10px;border-radius:50%;background:#12324A;margin-right:6px;vertical-align:-1px"></i>Collector: statistics once per 30 min</span>
+  <span><i style="display:inline-block;width:10px;height:10px;border-radius:50%;background:#0A60FF;margin-right:6px;vertical-align:-1px"></i>Collector: bulk state every 5 min</span>
+  <span><i style="display:inline-block;width:10px;height:10px;border-radius:50%;background:#0E2247;margin-right:6px;vertical-align:-1px"></i>Collector: statistics once per 30 min</span>
   <span><i style="display:inline-block;width:10px;height:10px;border-radius:50%;background:#D4537E;margin-right:6px;vertical-align:-1px"></i>Webhook push on alarm</span>
-  <span><i style="display:inline-block;width:10px;height:10px;border-radius:50%;background:#B7791F;margin-right:6px;vertical-align:-1px"></i>Real-time NETCONF, one router, on demand</span>
+  <span><i style="display:inline-block;width:10px;height:10px;border-radius:50%;background:#B86E00;margin-right:6px;vertical-align:-1px"></i>Real-time NETCONF, one router, on demand</span>
 </div>
 <div class="cap" id="f0log" style="font-family:var(--mono);min-height:3.4em;white-space:pre-line"></div>
 <div class="cap">Figure 0 — Who talks to whom, how often, and within which limits. Device export timers set statistics freshness (interface 5 min, app-route 10 min, collection interval 30 min default, range 5–180); the collector polls at the same cadence; alarms are pushed; only the engineer's real-time call reaches a router. State-sync cadence is illustrative — Cisco documents it only as periodic.</div>
@@ -725,14 +798,14 @@ var L=document.getElementById('f0lines'),PK=document.getElementById('f0pk'),log=
 var edges=[[210,158],[210,248],[210,338]],st=[320,154],db=[320,208],ae=[320,262],px=[580,358],col=[690,158],itsm=[690,248],eng=[690,338];
 function line(a,b,c){var l=document.createElementNS('http://www.w3.org/2000/svg','line');l.setAttribute('x1',a[0]);l.setAttribute('y1',a[1]);l.setAttribute('x2',b[0]);l.setAttribute('y2',b[1]);l.setAttribute('stroke',c);L.appendChild(l);}
 edges.forEach(function(e){line(e,st,'#9FD9BE');line(e,db,'#9FD9BE');line(e,ae,'#9FD9BE');});
-line(col,px,'#9CC9EA');line(itsm,[580,262],'#F1B9CB');line(eng,px,'#F2CF8C');
+line(col,px,'#A9C6FF');line(itsm,[580,262],'#F1B9CB');line(eng,px,'#F2CF8C');
 var flows=[
- {n:'interface stats',every:5,from:'edges',to:db,c:'#2C7A5B'},
- {n:'app-route stats',every:10,from:'edges',to:db,c:'#1F5C45',off:2},
- {n:'collection interval (DPI etc.)',every:30,from:'edges',to:db,c:'#143D2E',off:7},
+ {n:'interface stats',every:5,from:'edges',to:db,c:'#1F8A4C'},
+ {n:'app-route stats',every:10,from:'edges',to:db,c:'#176B3A',off:2},
+ {n:'collection interval (DPI etc.)',every:30,from:'edges',to:db,c:'#0F4A28',off:7},
  {n:'state sync',every:1,from:'edges',to:st,c:'#5FC493',off:0.3},
- {n:'GET /data/device/state (bulk)',every:5,from:col,to:px,c:'#0A7BB8',off:1,bulk:true},
- {n:'POST /statistics aggregation',every:30,from:col,to:px,c:'#12324A',off:12}
+ {n:'GET /data/device/state (bulk)',every:5,from:col,to:px,c:'#0A60FF',off:1,bulk:true},
+ {n:'POST /statistics aggregation',every:30,from:col,to:px,c:'#0E2247',off:12}
 ];
 var t=0,speed=4,run=true,last=null,pk=[],bulk=0,lines=[];
 function hhmm(){return ('0'+Math.floor(t/60)%24).slice(-2)+':'+('0'+Math.floor(t%60)).slice(-2);}
@@ -740,7 +813,7 @@ function say(s){lines.unshift(hhmm()+'  '+s);lines=lines.slice(0,3);log.textCont
 function packet(a,b,c,dur,cb){var e=document.createElementNS('http://www.w3.org/2000/svg','circle');e.setAttribute('r',5);e.setAttribute('fill',c);e.setAttribute('stroke','var(--panel)');e.setAttribute('stroke-width',1.5);PK.appendChild(e);pk.push({e:e,a:a,b:b,s:performance.now(),d:dur,cb:cb});}
 function fire(f){var dur=900;if(f.from==='edges'){edges.forEach(function(e,i){setTimeout(function(){packet(e,f.to,f.c,dur);},i*120);});}else{packet(f.from,f.to,f.c,dur,f.bulk?function(){bulk++;rl.textContent='bulk in flight: '+bulk+' / 2';setTimeout(function(){bulk--;rl.textContent='bulk in flight: '+bulk+' / 2';},1200);}:null);}say(f.n);}
 flows.forEach(function(f){f.next=(f.off||0);});
-document.getElementById('f0rt').onclick=function(){var e=edges[1];say('GET /device/bfd/sessions?deviceId= (engineer)');packet(eng,px,'#B7791F',700,function(){packet(px,e,'#B7791F',900,function(){packet(e,px,'#B7791F',900,function(){packet(px,eng,'#B7791F',700);});});});};
+document.getElementById('f0rt').onclick=function(){var e=edges[1];say('GET /device/bfd/sessions?deviceId= (engineer)');packet(eng,px,'#B86E00',700,function(){packet(px,e,'#B86E00',900,function(){packet(e,px,'#B86E00',900,function(){packet(px,eng,'#B86E00',700);});});});};
 document.getElementById('f0al').onclick=function(){var e=edges[2];say('BFD down event, alarm raised, webhook sent');packet(e,ae,'#D4537E',800,function(){packet(ae,itsm,'#D4537E',900);});};
 document.getElementById('f0pp').onclick=function(){run=!run;this.textContent=run?'Pause':'Play';};
 document.getElementById('f0sp').oninput=function(){speed=+this.value;document.getElementById('f0spv').textContent=speed+' min/s';};
@@ -1340,7 +1413,7 @@ def site_snapshot(m, system_ip):
 </section>
 </main>
 </div>
-<button class="toggle" id="themeBtn" type="button" aria-label="Toggle light or dark theme">Theme</button>
+<footer class="cse"><div class="cse-wrap"><p>Built from the Cisco DevNet Catalyst SD-WAN Manager API guides (Releases 20.18 and 26.1), the Cisco Catalyst SD-WAN Getting Started Guide, and the Cisco Control Components and Device Management Guide 26.x. Endpoint names reflect Release 26.1; verify against your Manager's <code>/apidocs</code> before production use.</p></div></footer>
 <script>
 (function(){
   var root=document.documentElement, btn=document.getElementById('themeBtn');
