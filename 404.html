@@ -4,22 +4,38 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Page Not Found</title>
-<link rel="icon" type="image/svg+xml" href="/sdwan-manager-api-guide/favicon.svg">
+<link rel="icon" type="image/svg+xml" href="/favicon.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
-:root{--bg:#F7F9FB;--ink:#12263A;--ink-2:#44576A;--accent:#0A7BB8}
-@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){--bg:#0E1720;--ink:#E6EDF3;--ink-2:#B4C1CE;--accent:#4FB3E8}}
-:root[data-theme="dark"]{--bg:#0E1720;--ink:#E6EDF3;--ink-2:#B4C1CE;--accent:#4FB3E8}
-body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.55 system-ui,-apple-system,Segoe UI,Roboto,sans-serif}
-main{max-width:560px;margin:0 auto;padding:80px 16px}
-h1{font-size:26px;margin:0 0 8px}
-p{color:var(--ink-2)}
-a{color:var(--accent)}
+:root{--bg:#FFFFFF;--panel:#FFFFFF;--ink:#07182D;--ink-2:#536070;--rule:#E1E6EB;--accent:#0A60FF;--accent-soft:#E8F0FF;--cyan:#00BCEB;
+  --sans:'Inter','Noto Sans',system-ui,-apple-system,'Segoe UI',Roboto,sans-serif}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){--bg:#05101C;--panel:#0B1622;--ink:#FFFFFF;--ink-2:#C9D1DA;--rule:#1E2B3A;--accent:#4D8DFF;--accent-soft:#0E2247;--cyan:#33CCF0;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#05101C;--panel:#0B1622;--ink:#FFFFFF;--ink-2:#C9D1DA;--rule:#1E2B3A;--accent:#4D8DFF;--accent-soft:#0E2247;--cyan:#33CCF0;color-scheme:dark}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.5 var(--sans);-webkit-font-smoothing:antialiased}
+.wrap{max-width:1240px;margin:0 auto;padding-inline:24px}
+header{background:var(--panel);border-bottom:1px solid var(--rule)}
+header .wrap{display:flex;align-items:center;height:64px}
+.brand{display:flex;flex-direction:column;line-height:1.15;text-decoration:none;color:var(--ink)}
+.brand b{font-weight:700;font-size:17px;letter-spacing:-.01em}.brand b span{color:var(--cyan)}
+.brand small{font-size:11.5px;color:var(--ink-2)}
+.hero{background:#000;color:#fff;padding-block:64px 72px}
+.eyebrow{color:#33CCF0;font-size:13px;font-weight:600;margin:0 0 8px}
+h1{font-size:clamp(32px,4.4vw,48px);line-height:1.17;font-weight:500;letter-spacing:-.015em;margin:0 0 14px}
+p.lead{font-size:18px;color:#B9C1C9;max-width:60ch;margin:0 0 26px}
+.hbtn{display:inline-flex;font:600 16px var(--sans);padding:10px 20px;border-radius:48px;background:#fff;color:#07182D;text-decoration:none}
+@media (max-width:640px){.wrap{padding-inline:16px}}
 </style>
 </head>
 <body>
-<main>
-  <h1>That page isn't here</h1>
-  <p>Go to the <a href="/sdwan-manager-api-guide/">Catalyst SD-WAN Manager API Field Guide</a>.</p>
+<header><div class="wrap"><a class="brand" href="/"><b>Cisco<span>SE</span></b><small>Field reference</small></a></div></header>
+<main class="hero">
+  <div class="wrap">
+    <p class="eyebrow">404</p>
+    <h1>That page isn't here</h1>
+    <p class="lead">The link may be old or mistyped. The full Catalyst SD-WAN (Software-Defined Wide Area Network) Manager API field guide is one page.</p>
+    <a class="hbtn" href="/">Open the field guide</a>
+  </div>
 </main>
 </body>
 </html>
